@@ -1,4 +1,5 @@
 :root {
+  color-scheme: light; /* keeps native form controls/scrollbars in the light theme even if the OS is set to dark */
   --bg: #f7f5f0;
   --card-bg: #ffffff;
   --border: #948669;      /* used for anything functional: input/card/grid boundaries — WCAG 1.4.11 (3:1) */
@@ -407,21 +408,6 @@ fieldset .macro-fields { display: grid; grid-template-columns: 1fr 1fr; gap: 0 1
 fieldset label { margin-top: 10px; }
 .dialog-actions { display: flex; gap: 10px; margin-top: 22px; }
 #add-recipe-output { margin-top: 14px; font-family: ui-monospace, monospace; font-size: 0.74rem; }
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --bg: #16140f;
-    --card-bg: #201d17;
-    --border: #6b6449;    /* kept at 3:1+ against both dark backgrounds, same reasoning as light mode */
-    --divider: #6b6449;
-    --text: #ece7da;
-    --text-muted: #a49c86;
-    --backlog: #e0a876;
-    --ink: #ece7da;
-    --ink-contrast: #16140f;
-  }
-  .dropdown-menu { box-shadow: 0 12px 24px rgba(0,0,0,0.4); }
-}
 
 @media (max-width: 600px) {
   .app-header h1 { font-size: 2rem; }
