@@ -1,0 +1,903 @@
+[
+  {
+    "id": "bf1-coldcut-scramble-cheerios",
+    "name": "Cold Cut Scramble + Cheerios",
+    "category": "Meal Prep",
+    "mealSlot": "Breakfast",
+    "dietDay": "Both",
+    "preferred": false,
+    "servings": 1,
+    "ingredients": [
+      "2 oz roasted chicken/turkey cold cuts, chopped",
+      "1 whole egg",
+      "1/2 cup egg whites",
+      "1 cup spinach (raw)",
+      "optional: onion, pepper, tomato, mushroom",
+      "1.5 cups plain Cheerios",
+      "unsweetened almond milk",
+      "splenda/stevia",
+      "1/2 cup any berries"
+    ],
+    "instructions": "Scramble cold cuts with eggs and spinach/veggies. Serve with Cheerios in almond milk (sweetened to taste) and berries on the side.",
+    "macros": {
+      "protein_g": 35.5,
+      "fat_g": 9.0,
+      "carb_g": 42.5,
+      "fiber_g": 7.5,
+      "calories": 385
+    },
+    "source": "Trainer meal plan",
+    "notes": "Backlog \u2014 not currently in rotation"
+  },
+  {
+    "id": "bf2-egg-bites",
+    "name": "Starbucks-Style Baked Egg Bites",
+    "category": "Meal Prep",
+    "mealSlot": "Breakfast",
+    "dietDay": "Both",
+    "preferred": true,
+    "servings": 1,
+    "ingredients": [
+      "1 whole egg",
+      "1/2 cup egg whites",
+      "2 slices turkey bacon, diced",
+      "1 cup low-fat cottage cheese (start with full cup)",
+      "1 tbsp cornstarch",
+      "1 cup green veggies (spinach, bell pepper), chopped",
+      "salt, pepper, hot sauce to taste",
+      "optional: up to 2 tbsp shredded gruyere"
+    ],
+    "instructions": "Cook turkey bacon until crisp, dice. Blend egg, egg whites, cottage cheese, cornstarch, salt/pepper/hot sauce (+ gruyere if using) until smooth. Fold in chopped veggies or layer with bacon in a greased muffin tin, filling wells ~3/4 full. Bake at 300F with a water-bath tray on the lower oven rack, 20-25 min until set. Rest 5 min. Yields ~5-6 bites.",
+    "macros": {
+      "protein_g": 61.0,
+      "fat_g": 14.0,
+      "carb_g": 20.5,
+      "fiber_g": 4.0,
+      "calories": 471
+    },
+    "source": "Personalized (adapted from Once Upon a Chef bacon gruyere egg bites)",
+    "notes": "Uses the Snack #7 cottage cheese portion \u2014 skip a snack that day, or eat leftover cottage cheese as the snack if using less than a full cup."
+  },
+  {
+    "id": "bf3-french-toast",
+    "name": "Ezekiel French Toast",
+    "category": "Meal Prep",
+    "mealSlot": "Breakfast",
+    "dietDay": "Both",
+    "preferred": false,
+    "servings": 1,
+    "ingredients": [
+      "1 whole egg",
+      "1/4 cup egg whites, whisked together",
+      "2 slices Ezekiel bread",
+      "coconut oil spray or olive oil spray",
+      "cinnamon",
+      "splenda/stevia",
+      "1/2 cup egg whites (side, scrambled)",
+      "1 cup spinach, raw (side)"
+    ],
+    "instructions": "Whisk egg + 1/4 cup egg whites. Dip Ezekiel bread slices, pan-cook with oil spray. Top with cinnamon + splenda/stevia. Serve with a side of 1/2 cup egg whites scrambled with spinach.",
+    "macros": {
+      "protein_g": 36.0,
+      "fat_g": 6.0,
+      "carb_g": 33.0,
+      "fiber_g": 7.0,
+      "calories": 339
+    },
+    "source": "Trainer meal plan",
+    "notes": "Backlog \u2014 not currently in rotation"
+  },
+  {
+    "id": "bf4-banana-bread",
+    "name": "Banana Bread (baked Option 4)",
+    "category": "Bakery",
+    "mealSlot": "Breakfast",
+    "dietDay": "Both",
+    "preferred": true,
+    "servings": 1,
+    "ingredients": [
+      "1 whole egg",
+      "3/4 cup egg whites",
+      "1/4 cup oatmeal, measured dry",
+      "1 medium banana",
+      "splenda/stevia to taste",
+      "1/4 cup blueberries"
+    ],
+    "instructions": "Blend all ingredients together, pour into a loaf pan, bake at 335F for ~1 hour.",
+    "macros": {
+      "protein_g": 30.8,
+      "fat_g": 6.9,
+      "carb_g": 47.5,
+      "fiber_g": 6.0,
+      "calories": 373
+    },
+    "source": "Personalized (baked version of trainer's banana pancakes Option 4)",
+    "notes": "Blueberries added daily on both low and medium carb days \u2014 symmetric, so it doesn't disturb the carb-cycling gap between day types (~+5g carb baseline either way)."
+  },
+  {
+    "id": "bf5-steak-potato-melon",
+    "name": "Steak, Egg Whites, Potato & Melon",
+    "category": "Meal Prep",
+    "mealSlot": "Breakfast",
+    "dietDay": "Both",
+    "preferred": false,
+    "servings": 1,
+    "ingredients": [
+      "2 oz lean steak",
+      "3/4 cup egg whites",
+      "1 cup green veggies",
+      "4 oz potato (zero-fat frozen hash browns work)",
+      "5 oz melon (cantaloupe, watermelon, or honeydew)"
+    ],
+    "instructions": "Cook steak and hash browns (olive oil spray). Scramble egg whites. Plate with green veggies and melon on the side.",
+    "macros": {
+      "protein_g": 40.0,
+      "fat_g": 6.0,
+      "carb_g": 40.5,
+      "fiber_g": 7.0,
+      "calories": 387
+    },
+    "source": "Trainer meal plan",
+    "notes": "Backlog \u2014 not currently in rotation"
+  },
+  {
+    "id": "bf6-rush-a-yogurt-toast",
+    "name": "In-a-Rush A: Yogurt, Berries & Ezekiel Toast",
+    "category": "Meal Prep",
+    "mealSlot": "Breakfast",
+    "dietDay": "Both",
+    "preferred": true,
+    "servings": 1,
+    "ingredients": [
+      "1 cup 0% Fage Greek yogurt",
+      "splenda/stevia",
+      "1 cup any kind of berries",
+      "1 slice Ezekiel bread, toasted",
+      "1 tbsp almond butter"
+    ],
+    "instructions": "Add berries to the sweetened Fage, toast the Ezekiel bread, spread almond butter on the toast.",
+    "macros": {
+      "protein_g": 30.0,
+      "fat_g": 9.5,
+      "carb_g": 45.0,
+      "fiber_g": 8.0,
+      "calories": 378
+    },
+    "source": "Trainer meal plan",
+    "notes": "Cap: options 6+7 combined max 3x/week. If used, next snack can't be a shake/Quest bar."
+  },
+  {
+    "id": "bf7-rush-b-shake",
+    "name": "In-a-Rush B: Protein Oat Berry Shake",
+    "category": "Meal Prep",
+    "mealSlot": "Breakfast",
+    "dietDay": "Both",
+    "preferred": true,
+    "servings": 1,
+    "ingredients": [
+      "1 scoop Oxywhey protein",
+      "1/4 cup oatmeal",
+      "1 cup any kind of berries (fresh or frozen)",
+      "1 tbsp almond butter",
+      "unsweetened almond milk",
+      "splenda/stevia + ice, optional"
+    ],
+    "instructions": "Blend all ingredients until smooth.",
+    "macros": {
+      "protein_g": 29.5,
+      "fat_g": 11.5,
+      "carb_g": 36.5,
+      "fiber_g": 7.0,
+      "calories": 353
+    },
+    "source": "Trainer meal plan",
+    "notes": "User's 'maybe' preferred. Cap: options 6+7 combined max 3x/week; max 1 shake/day."
+  },
+  {
+    "id": "sn-oxywhey-almondbutter",
+    "name": "Oxywhey + Almond Butter",
+    "category": "Meal Prep",
+    "mealSlot": "Snack",
+    "dietDay": "Both",
+    "preferred": true,
+    "servings": 1,
+    "ingredients": [
+      "1 scoop Oxywhey protein",
+      "1 tbsp almond butter"
+    ],
+    "instructions": "Mix or eat separately.",
+    "macros": {
+      "protein_g": 27.0,
+      "fat_g": 10.0,
+      "carb_g": 5.0,
+      "fiber_g": 1.0,
+      "calories": 208
+    },
+    "source": "Trainer meal plan",
+    "notes": "Used for both Snack #1 and Snack #2 slots. Don't use the shake option and Quest bar on the same day."
+  },
+  {
+    "id": "sn-chicken-turkey-wrap",
+    "name": "Chicken/Turkey Lettuce Wrap",
+    "category": "Meal Prep",
+    "mealSlot": "Snack",
+    "dietDay": "Both",
+    "preferred": true,
+    "servings": 1,
+    "ingredients": [
+      "4 oz roasted chicken/turkey cold cuts",
+      "mustard",
+      "lettuce leaves",
+      "1 tbsp almond butter"
+    ],
+    "instructions": "Wrap cold cuts and mustard in lettuce leaves; almond butter on the side.",
+    "macros": {
+      "protein_g": 23.0,
+      "fat_g": 11.0,
+      "carb_g": 5.0,
+      "fiber_g": 1.0,
+      "calories": 208
+    },
+    "source": "Trainer meal plan",
+    "notes": "Used for both Snack #1 and Snack #2 slots. Don't use the shake option and Quest bar on the same day."
+  },
+  {
+    "id": "sn-tuna-wrap",
+    "name": "Tuna Lettuce Wrap",
+    "category": "Meal Prep",
+    "mealSlot": "Snack",
+    "dietDay": "Both",
+    "preferred": true,
+    "servings": 1,
+    "ingredients": [
+      "4 oz tuna",
+      "1 tbsp avocado mayonnaise",
+      "mustard, salt, pepper",
+      "chopped celery/red onion",
+      "lettuce leaves"
+    ],
+    "instructions": "Mix tuna with avocado mayo, mustard, and seasoning; wrap in lettuce.",
+    "macros": {
+      "protein_g": 30.0,
+      "fat_g": 11.0,
+      "carb_g": 0.0,
+      "fiber_g": 0.0,
+      "calories": 220
+    },
+    "source": "Trainer meal plan",
+    "notes": "Used for both Snack #1 and Snack #2 slots. Don't use the shake option and Quest bar on the same day."
+  },
+  {
+    "id": "sn-chicken-salad",
+    "name": "Chicken Salad",
+    "category": "Meal Prep",
+    "mealSlot": "Snack",
+    "dietDay": "Both",
+    "preferred": true,
+    "servings": 1,
+    "ingredients": [
+      "16 oz cooked chicken (makes 4 servings, use 1 = 4oz)",
+      "no grapes or walnuts",
+      "1-2 cups mixed greens lettuce",
+      "14 almonds (0.5 oz)"
+    ],
+    "instructions": "Mix chopped chicken with your usual chicken salad base (no grapes/walnuts). Serve over greens with almonds.",
+    "macros": {
+      "protein_g": 39.0,
+      "fat_g": 12.0,
+      "carb_g": 7.0,
+      "fiber_g": 3.5,
+      "calories": 287
+    },
+    "source": "Trainer meal plan",
+    "notes": "Used for both Snack #1 and Snack #2 slots. Don't use the shake option and Quest bar on the same day."
+  },
+  {
+    "id": "sn-turkey-meatballs",
+    "name": "Turkey Meatballs + Marinara",
+    "category": "Meal Prep",
+    "mealSlot": "Snack",
+    "dietDay": "Both",
+    "preferred": true,
+    "servings": 1,
+    "ingredients": [
+      "lean ground turkey",
+      "salt, pepper, finely chopped onion & garlic",
+      "4 oz cooked, measured",
+      "lowest-carb marinara sauce available",
+      "14 almonds (0.5 oz)"
+    ],
+    "instructions": "Form and cook meatballs, measure to 4oz, top with marinara. Serve with almonds.",
+    "macros": {
+      "protein_g": 32.0,
+      "fat_g": 18.0,
+      "carb_g": 8.0,
+      "fiber_g": 2.5,
+      "calories": 305
+    },
+    "source": "Trainer meal plan",
+    "notes": "Used for both Snack #1 and Snack #2 slots. Don't use the shake option and Quest bar on the same day."
+  },
+  {
+    "id": "sn-deviled-eggs",
+    "name": "Lean Deviled Eggs",
+    "category": "Meal Prep",
+    "mealSlot": "Snack",
+    "dietDay": "Both",
+    "preferred": true,
+    "servings": 1,
+    "ingredients": [
+      "recipe makes 3 servings, use 1"
+    ],
+    "instructions": "Prepare lean deviled eggs recipe, serve 1 of 3 servings.",
+    "macros": {
+      "protein_g": 6.0,
+      "fat_g": 5.0,
+      "carb_g": 1.0,
+      "fiber_g": 0.0,
+      "calories": 80
+    },
+    "source": "Trainer meal plan",
+    "notes": "Used for both Snack #1 and Snack #2 slots. Don't use the shake option and Quest bar on the same day."
+  },
+  {
+    "id": "sn-cottage-cheese-avocado",
+    "name": "Cottage Cheese + Avocado or Almond Butter",
+    "category": "Meal Prep",
+    "mealSlot": "Snack",
+    "dietDay": "Both",
+    "preferred": true,
+    "servings": 1,
+    "ingredients": [
+      "1 cup low-fat cottage cheese",
+      "1/4 avocado OR 1 tbsp almond butter"
+    ],
+    "instructions": "Combine and eat.",
+    "macros": {
+      "protein_g": 29.0,
+      "fat_g": 7.0,
+      "carb_g": 7.0,
+      "fiber_g": 2.0,
+      "calories": 223
+    },
+    "source": "Trainer meal plan",
+    "notes": "Used for both Snack #1 and Snack #2 slots. Don't use the shake option and Quest bar on the same day."
+  },
+  {
+    "id": "sn-quest-bar",
+    "name": "Quest Protein Bar",
+    "category": "Meal Prep",
+    "mealSlot": "Snack",
+    "dietDay": "Both",
+    "preferred": true,
+    "servings": 1,
+    "ingredients": [
+      "1 Quest Protein Bar, any flavor (no other brand)"
+    ],
+    "instructions": "Eat as-is.",
+    "macros": {
+      "protein_g": 20.0,
+      "fat_g": 8.0,
+      "carb_g": 21.0,
+      "fiber_g": 14.0,
+      "calories": 190
+    },
+    "source": "Trainer meal plan",
+    "notes": "Used for both Snack #1 and Snack #2 slots. Don't use the shake option and Quest bar on the same day."
+  },
+  {
+    "id": "lu-low-1-fish-broccoli",
+    "name": "Lunch (Low): White Fish + Garlic Lemon Broccoli",
+    "category": "Meal Prep",
+    "mealSlot": "Lunch",
+    "dietDay": "Low Carb",
+    "preferred": true,
+    "servings": 1,
+    "ingredients": [
+      "4 oz white fish",
+      "Garlic/Lemon Broccoli (makes 3-4 servings, use 1)",
+      "1 tbsp olive oil on veggies"
+    ],
+    "instructions": "Cook fish; toss broccoli with olive oil.",
+    "macros": {
+      "protein_g": 25.0,
+      "fat_g": 16.5,
+      "carb_g": 5.0,
+      "fiber_g": 3.0,
+      "calories": 265
+    },
+    "source": "Trainer meal plan"
+  },
+  {
+    "id": "lu-low-2-chicken-zucchini",
+    "name": "Lunch (Low): Chicken + Zucchini Veggie Saute",
+    "category": "Meal Prep",
+    "mealSlot": "Lunch",
+    "dietDay": "Low Carb",
+    "preferred": true,
+    "servings": 1,
+    "ingredients": [
+      "4 oz chicken breast",
+      "Zucchini/Veggie Saute (makes 4-6 servings, use 1)",
+      "1/4 cup (1 oz) almonds or cashews"
+    ],
+    "instructions": "Cook chicken; serve with zucchini saute and nuts.",
+    "macros": {
+      "protein_g": 43.0,
+      "fat_g": 20.0,
+      "carb_g": 14.0,
+      "fiber_g": 6.0,
+      "calories": 402
+    },
+    "source": "Trainer meal plan"
+  },
+  {
+    "id": "lu-low-3-tuna-salad",
+    "name": "Lunch (Low): Tuna/Chicken Salad",
+    "category": "Meal Prep",
+    "mealSlot": "Lunch",
+    "dietDay": "Low Carb",
+    "preferred": true,
+    "servings": 1,
+    "ingredients": [
+      "4 oz tuna OR chicken breast",
+      "3-4 cups mixed greens",
+      "chopped tomato/cucumber/carrots, optional",
+      "olive oil vinaigrette (1 tbsp olive oil in dressing, no extra)"
+    ],
+    "instructions": "Toss greens and protein with vinaigrette.",
+    "macros": {
+      "protein_g": 32.0,
+      "fat_g": 15.0,
+      "carb_g": 8.0,
+      "fiber_g": 3.0,
+      "calories": 290
+    },
+    "source": "Trainer meal plan"
+  },
+  {
+    "id": "lu-low-4-turkey-scramble",
+    "name": "Lunch (Low): Ground Turkey Veggie Scramble + Avocado",
+    "category": "Meal Prep",
+    "mealSlot": "Lunch",
+    "dietDay": "Low Carb",
+    "preferred": true,
+    "servings": 1,
+    "ingredients": [
+      "4 oz cooked lean ground turkey",
+      "onion/peppers, 1-2 cups green veggies",
+      "taco seasoning",
+      "1/2 avocado",
+      "fresh salsa, optional"
+    ],
+    "instructions": "Cook turkey with taco-seasoned veggies. Top with avocado and salsa.",
+    "macros": {
+      "protein_g": 33.0,
+      "fat_g": 20.0,
+      "carb_g": 14.0,
+      "fiber_g": 8.0,
+      "calories": 360
+    },
+    "source": "Trainer meal plan"
+  },
+  {
+    "id": "lu-low-5-steak-veggies",
+    "name": "Lunch (Low): Lean Steak + Green Veggies",
+    "category": "Meal Prep",
+    "mealSlot": "Lunch",
+    "dietDay": "Low Carb",
+    "preferred": true,
+    "servings": 1,
+    "ingredients": [
+      "4 oz lean steak OR 90% lean ground beef",
+      "1-2 cups green veggies"
+    ],
+    "instructions": "Cook steak, serve with steamed/sauteed green veggies.",
+    "macros": {
+      "protein_g": 31.0,
+      "fat_g": 11.0,
+      "carb_g": 8.0,
+      "fiber_g": 4.0,
+      "calories": 249
+    },
+    "source": "Trainer meal plan"
+  },
+  {
+    "id": "lu-med-1-fish-rice-zucchini",
+    "name": "Lunch (Medium): White Fish + Brown Rice + Zucchini Saute",
+    "category": "Meal Prep",
+    "mealSlot": "Lunch",
+    "dietDay": "Medium Carb",
+    "preferred": true,
+    "servings": 1,
+    "ingredients": [
+      "4 oz white fish",
+      "1/2 cup brown rice",
+      "Zucchini/Veggie Saute (makes 4-6 servings, use 1)"
+    ],
+    "instructions": "Cook fish and rice; serve with zucchini saute.",
+    "macros": {
+      "protein_g": 27.5,
+      "fat_g": 3.5,
+      "carb_g": 30.0,
+      "fiber_g": 5.0,
+      "calories": 268
+    },
+    "source": "Trainer meal plan"
+  },
+  {
+    "id": "lu-med-2-chicken-potato",
+    "name": "Lunch (Medium): Chicken + Potato + Green Veggies",
+    "category": "Meal Prep",
+    "mealSlot": "Lunch",
+    "dietDay": "Medium Carb",
+    "preferred": true,
+    "servings": 1,
+    "ingredients": [
+      "4 oz chicken breast",
+      "4 oz red skin potato OR sweet potato",
+      "1 cup green veggies"
+    ],
+    "instructions": "Cook chicken and potato; serve with green veggies.",
+    "macros": {
+      "protein_g": 40.0,
+      "fat_g": 5.0,
+      "carb_g": 28.0,
+      "fiber_g": 6.0,
+      "calories": 327
+    },
+    "source": "Trainer meal plan"
+  },
+  {
+    "id": "lu-med-3-chicken-rice-broccoli",
+    "name": "Lunch (Medium): Chicken + Brown Rice + Garlic Lemon Broccoli",
+    "category": "Meal Prep",
+    "mealSlot": "Lunch",
+    "dietDay": "Medium Carb",
+    "preferred": true,
+    "servings": 1,
+    "ingredients": [
+      "4 oz chicken breast",
+      "1/2 cup brown rice",
+      "Garlic/Lemon Broccoli (makes 3-4 servings, use 1)"
+    ],
+    "instructions": "Cook chicken and rice; serve with broccoli.",
+    "macros": {
+      "protein_g": 39.5,
+      "fat_g": 6.0,
+      "carb_g": 27.0,
+      "fiber_g": 5.0,
+      "calories": 330
+    },
+    "source": "Trainer meal plan"
+  },
+  {
+    "id": "lu-med-4-turkey-beans",
+    "name": "Lunch (Medium): Ground Turkey Veggie Scramble + Beans",
+    "category": "Meal Prep",
+    "mealSlot": "Lunch",
+    "dietDay": "Medium Carb",
+    "preferred": true,
+    "servings": 1,
+    "ingredients": [
+      "4 oz cooked lean ground turkey",
+      "onion/peppers, 1 cup green veggies",
+      "taco seasoning",
+      "1/2 cup black OR pinto beans",
+      "fresh salsa, optional"
+    ],
+    "instructions": "Cook turkey with taco-seasoned veggies; serve with beans.",
+    "macros": {
+      "protein_g": 38.0,
+      "fat_g": 10.5,
+      "carb_g": 28.0,
+      "fiber_g": 11.0,
+      "calories": 350
+    },
+    "source": "Trainer meal plan"
+  },
+  {
+    "id": "lu-med-5-sandwich-wrap",
+    "name": "Lunch (Medium): Chicken/Turkey Sandwich Wrap",
+    "category": "Meal Prep",
+    "mealSlot": "Lunch",
+    "dietDay": "Medium Carb",
+    "preferred": true,
+    "servings": 1,
+    "ingredients": [
+      "4 oz roasted chicken/turkey cold cuts (or shredded chicken)",
+      "mustard",
+      "1 cup mixed greens lettuce",
+      "tomato/onion, optional",
+      "1 sandwich wrap"
+    ],
+    "instructions": "Wrap cold cuts, mustard, and greens in the sandwich wrap.",
+    "macros": {
+      "protein_g": 25.0,
+      "fat_g": 5.0,
+      "carb_g": 21.0,
+      "fiber_g": 6.0,
+      "calories": 220
+    },
+    "source": "Trainer meal plan"
+  },
+  {
+    "id": "di-low-1-steak-greenbeans",
+    "name": "Dinner (Low): Steak + Balsamic Green Bean Salad",
+    "category": "Meal Prep",
+    "mealSlot": "Dinner",
+    "dietDay": "Low Carb",
+    "preferred": true,
+    "servings": 1,
+    "ingredients": [
+      "4 oz lean steak OR 90% lean ground beef",
+      "Balsamic Green Bean Salad (makes 4-6 servings, use 1)"
+    ],
+    "instructions": "Cook steak; serve with balsamic green bean salad.",
+    "macros": {
+      "protein_g": 30.0,
+      "fat_g": 11.0,
+      "carb_g": 5.0,
+      "fiber_g": 3.0,
+      "calories": 234
+    },
+    "source": "Trainer meal plan"
+  },
+  {
+    "id": "di-low-2-salmon-asparagus",
+    "name": "Dinner (Low): Salmon + Oven Roasted Asparagus",
+    "category": "Meal Prep",
+    "mealSlot": "Dinner",
+    "dietDay": "Low Carb",
+    "preferred": true,
+    "servings": 1,
+    "ingredients": [
+      "4 oz salmon",
+      "Oven Roasted Asparagus (makes 4 servings, use 1)"
+    ],
+    "instructions": "Bake salmon and asparagus.",
+    "macros": {
+      "protein_g": 31.0,
+      "fat_g": 12.0,
+      "carb_g": 5.0,
+      "fiber_g": 3.0,
+      "calories": 265
+    },
+    "source": "Trainer meal plan"
+  },
+  {
+    "id": "di-low-3-teriyaki-nuts",
+    "name": "Dinner (Low): Teriyaki Chicken Stir Fry + Nuts",
+    "category": "Meal Prep",
+    "mealSlot": "Dinner",
+    "dietDay": "Low Carb",
+    "preferred": true,
+    "servings": 1,
+    "ingredients": [
+      "4 oz cooked chicken breast, chopped",
+      "sauteed peppers, onions, garlic, baby bok choy, mushrooms, broccoli",
+      "4-5 tbsp sugar-free teriyaki sauce (no other brand)",
+      "1/4 cup (1 oz) almonds or cashews"
+    ],
+    "instructions": "Stir fry chicken and veggies, mix with teriyaki sauce. Serve with nuts on the side.",
+    "macros": {
+      "protein_g": 44.0,
+      "fat_g": 20.0,
+      "carb_g": 17.0,
+      "fiber_g": 6.0,
+      "calories": 417
+    },
+    "source": "Trainer meal plan"
+  },
+  {
+    "id": "di-low-4-chicken-kale",
+    "name": "Dinner (Low): Chicken + Kale + Olive Oil",
+    "category": "Meal Prep",
+    "mealSlot": "Dinner",
+    "dietDay": "Low Carb",
+    "preferred": true,
+    "servings": 1,
+    "ingredients": [
+      "4 oz chicken breast",
+      "2-3 cups kale, raw",
+      "1 tbsp olive oil on veggies"
+    ],
+    "instructions": "Cook chicken; prepare kale per usual method, dress with olive oil.",
+    "macros": {
+      "protein_g": 38.0,
+      "fat_g": 19.0,
+      "carb_g": 10.0,
+      "fiber_g": 3.0,
+      "calories": 357
+    },
+    "source": "Trainer meal plan"
+  },
+  {
+    "id": "di-low-5-turkey-burger-nuts",
+    "name": "Dinner (Low): Turkey Lettuce-Bun Burger + Nuts",
+    "category": "Meal Prep",
+    "mealSlot": "Dinner",
+    "dietDay": "Low Carb",
+    "preferred": true,
+    "servings": 1,
+    "ingredients": [
+      "4 oz lean ground turkey (cooked patty)",
+      "iceberg lettuce bun",
+      "tomato, onion, pickle, mustard, low-sugar ketchup, optional",
+      "1/4 cup (1 oz) almonds or cashews, side"
+    ],
+    "instructions": "Form and cook a 4oz turkey patty, wrap in iceberg lettuce. Serve with nuts on the side.",
+    "macros": {
+      "protein_g": 34.0,
+      "fat_g": 24.0,
+      "carb_g": 6.0,
+      "fiber_g": 3.0,
+      "calories": 355
+    },
+    "source": "Trainer meal plan"
+  },
+  {
+    "id": "di-med-1-fish-rice-kale",
+    "name": "Dinner (Medium): White Fish + Brown Rice + Kale (no oil)",
+    "category": "Meal Prep",
+    "mealSlot": "Dinner",
+    "dietDay": "Medium Carb",
+    "preferred": true,
+    "servings": 1,
+    "ingredients": [
+      "4 oz white fish",
+      "1/2 cup brown rice",
+      "1-2 cups kale, raw",
+      "NO olive oil"
+    ],
+    "instructions": "Cook fish and rice; serve with plain-prepared kale.",
+    "macros": {
+      "protein_g": 28.5,
+      "fat_g": 3.5,
+      "carb_g": 32.0,
+      "fiber_g": 5.0,
+      "calories": 268
+    },
+    "source": "Trainer meal plan"
+  },
+  {
+    "id": "di-med-2-chicken-rice-greenbeans",
+    "name": "Dinner (Medium): Chicken + Brown Rice + Balsamic Green Bean Salad",
+    "category": "Meal Prep",
+    "mealSlot": "Dinner",
+    "dietDay": "Medium Carb",
+    "preferred": true,
+    "servings": 1,
+    "ingredients": [
+      "4 oz chicken breast",
+      "1/2 cup brown rice",
+      "Balsamic Green Bean Salad (makes 4-6 servings, use 1)"
+    ],
+    "instructions": "Cook chicken and rice; serve with green bean salad.",
+    "macros": {
+      "protein_g": 39.5,
+      "fat_g": 6.0,
+      "carb_g": 27.0,
+      "fiber_g": 5.0,
+      "calories": 330
+    },
+    "source": "Trainer meal plan"
+  },
+  {
+    "id": "di-med-3-chicken-potato-asparagus",
+    "name": "Dinner (Medium): Chicken + Potato + Oven Roasted Asparagus",
+    "category": "Meal Prep",
+    "mealSlot": "Dinner",
+    "dietDay": "Medium Carb",
+    "preferred": true,
+    "servings": 1,
+    "ingredients": [
+      "4 oz chicken breast",
+      "4 oz red skin potato OR sweet potato",
+      "Oven Roasted Asparagus (makes 4 servings, use 1)"
+    ],
+    "instructions": "Cook chicken and potato; serve with roasted asparagus.",
+    "macros": {
+      "protein_g": 39.0,
+      "fat_g": 5.0,
+      "carb_g": 25.0,
+      "fiber_g": 5.0,
+      "calories": 312
+    },
+    "source": "Trainer meal plan"
+  },
+  {
+    "id": "di-med-4-teriyaki-rice",
+    "name": "Dinner (Medium): Teriyaki Chicken Stir Fry + Rice",
+    "category": "Meal Prep",
+    "mealSlot": "Dinner",
+    "dietDay": "Medium Carb",
+    "preferred": true,
+    "servings": 1,
+    "ingredients": [
+      "4 oz cooked chicken breast, chopped",
+      "sauteed peppers, onions, garlic, baby bok choy, mushrooms, broccoli",
+      "4-5 tbsp sugar-free teriyaki sauce (no other brand)",
+      "1/2 cup brown rice"
+    ],
+    "instructions": "Stir fry chicken and veggies, mix with teriyaki sauce. Serve over rice.",
+    "macros": {
+      "protein_g": 40.5,
+      "fat_g": 6.0,
+      "carb_g": 33.0,
+      "fiber_g": 5.0,
+      "calories": 360
+    },
+    "source": "Trainer meal plan"
+  },
+  {
+    "id": "di-med-5-turkey-burger-fries",
+    "name": "Dinner (Medium): Turkey Lettuce-Bun Burger + Baked Fries",
+    "category": "Meal Prep",
+    "mealSlot": "Dinner",
+    "dietDay": "Medium Carb",
+    "preferred": true,
+    "servings": 1,
+    "ingredients": [
+      "4 oz lean ground turkey (cooked patty)",
+      "iceberg lettuce bun",
+      "tomato, onion, pickle, mustard, low-sugar ketchup, optional",
+      "4 oz Low Fat Baked Fries (specific brand \u2014 red skin potato if unavailable)"
+    ],
+    "instructions": "Form and cook a 4oz turkey patty, wrap in iceberg lettuce. Serve with baked fries.",
+    "macros": {
+      "protein_g": 30.0,
+      "fat_g": 11.0,
+      "carb_g": 30.0,
+      "fiber_g": 3.0,
+      "calories": 340
+    },
+    "source": "Trainer meal plan"
+  },
+  {
+    "id": "sn3-low-yogurt-almondbutter",
+    "name": "Snack #3 (Low): Fage Yogurt + Almond Butter",
+    "category": "Meal Prep",
+    "mealSlot": "Snack",
+    "dietDay": "Low Carb",
+    "preferred": true,
+    "servings": 1,
+    "ingredients": [
+      "1 cup 0% Fage Greek yogurt, sweetened with splenda",
+      "1 tbsp almond butter"
+    ],
+    "instructions": "Combine and eat.",
+    "macros": {
+      "protein_g": 26.0,
+      "fat_g": 9.0,
+      "carb_g": 12.0,
+      "fiber_g": 1.0,
+      "calories": 228
+    },
+    "source": "Trainer meal plan"
+  },
+  {
+    "id": "sn3-med-yogurt-berries",
+    "name": "Snack #3 (Medium): Fage Yogurt + Berries",
+    "category": "Meal Prep",
+    "mealSlot": "Snack",
+    "dietDay": "Medium Carb",
+    "preferred": true,
+    "servings": 1,
+    "ingredients": [
+      "1 cup 0% Fage Greek yogurt",
+      "1/2 cup any kind of berries",
+      "1-2 packets splenda, optional"
+    ],
+    "instructions": "Combine and eat.",
+    "macros": {
+      "protein_g": 23.0,
+      "fat_g": 0.0,
+      "carb_g": 18.0,
+      "fiber_g": 2.0,
+      "calories": 165
+    },
+    "source": "Trainer meal plan",
+    "notes": "User's personal variant: omits the berries on medium days (offered to save this tweak, not yet confirmed)."
+  }
+]
