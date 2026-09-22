@@ -8,6 +8,7 @@ const SLOT_TO_MEALSLOT = {
 let RECIPES = [];
 let plan = loadJSON("mealprep.plan", {});
 let groceryChecked = loadJSON("mealprep.groceryChecked", {});
+let currentCategory = "";
 
 function loadJSON(key, fallback) {
   try {
@@ -29,16 +30,15 @@ async function init() {
     return;
   }
   setupFilters();
+  setupCategoryMenu();
   renderRecipes();
   renderPlanner();
   renderGrocery();
   setupTabs();
   setupAddRecipeDialog();
   document.getElementById("search").addEventListener("input", renderRecipes);
-  document.getElementById("filter-category").addEventListener("change", renderRecipes);
   document.getElementById("filter-mealslot").addEventListener("change", renderRecipes);
   document.getElementById("filter-diet").addEventListener("change", renderRecipes);
-  document.getElementById("filter-preferred").addEventListener("change", renderRecipes);
   document.getElementById("clear-week-btn").addEventListener("click", () => {
     if (confirm("Clear all meals selected for this week?")) {
       plan = {}; saveJSON("mealprep.plan", plan); renderPlanner(); renderGrocery();
@@ -49,23 +49,71 @@ async function init() {
 
 function setupTabs() {
   document.querySelectorAll(".tab-btn").forEach(btn => {
-    btn.addEventListener("click", () => {
-      document.querySelectorAll(".tab-btn").forEach(b => b.classList.remove("active"));
-      document.querySelectorAll(".tab-panel").forEach(p => p.classList.remove("active"));
-      btn.classList.add("active");
-      document.getElementById("tab-" + btn.dataset.tab).classList.add("active");
-    });
+    if (btn.id === "recipe-book-btn") return; // handled in setupCategoryMenu (also toggles the dropdown)
+    btn.addEventListener("click", () => switchTab(btn.dataset.tab));
   });
 }
 
 function setupFilters() {
-  const cats = [...new Set(RECIPES.map(r => r.category))].sort();
   const slots = [...new Set(RECIPES.map(r => r.mealSlot))].sort();
   const diets = [...new Set(RECIPES.map(r => r.dietDay))].sort();
-  fillSelect("filter-category", cats);
   fillSelect("filter-mealslot", slots);
   fillSelect("filter-diet", diets);
+  const cats = [...new Set(RECIPES.map(r => r.category))].sort();
   document.getElementById("category-list").innerHTML = cats.map(c => `<option value="${esc(c)}">`).join("");
+}
+
+function setupCategoryMenu() {
+  const cats = [...new Set(RECIPES.map(r => r.category))].sort();
+  const menu = document.getElementById("category-menu");
+  const allBtn = `<button data-cat="" class="${currentCategory === "" ? "active" : ""}">All Categories</button>`;
+  const catBtns = cats.map(c => `<button data-cat="${esc(c)}" class="${currentCategory === c ? "active" : ""}">${esc(c)}</button>`).join("");
+  menu.innerHTML = allBtn + catBtns;
+
+  menu.querySelectorAll("button").forEach(btn => {
+    btn.addEventListener("click", (e) => {
+      e.stopPropagation();
+      currentCategory = btn.dataset.cat;
+      switchTab("recipes");
+      setupCategoryMenu();
+      renderRecipes();
+      renderActiveCategoryTag();
+      menu.classList.remove("open");
+    });
+  });
+
+  const recipeBookBtn = document.getElementById("recipe-book-btn");
+  recipeBookBtn.onclick = (e) => {
+    e.stopPropagation();
+    if (document.getElementById("tab-recipes").classList.contains("active")) {
+      menu.classList.toggle("open");
+    } else {
+      switchTab("recipes");
+    }
+  };
+  document.addEventListener("click", () => menu.classList.remove("open"));
+}
+
+function renderActiveCategoryTag() {
+  const tag = document.getElementById("active-category-tag");
+  tag.innerHTML = currentCategory
+    ? `Category: ${esc(currentCategory)} <button id="clear-category">Clear</button>`
+    : "";
+  const clearBtn = document.getElementById("clear-category");
+  if (clearBtn) clearBtn.addEventListener("click", () => {
+    currentCategory = "";
+    setupCategoryMenu();
+    renderRecipes();
+    renderActiveCategoryTag();
+  });
+}
+
+function switchTab(name) {
+  document.querySelectorAll(".tab-btn").forEach(b => b.classList.remove("active"));
+  document.querySelectorAll(".tab-panel").forEach(p => p.classList.remove("active"));
+  (document.getElementById(name === "recipes" ? "recipe-book-btn" : null) ||
+    [...document.querySelectorAll(".tab-btn")].find(b => b.dataset.tab === name)).classList.add("active");
+  document.getElementById("tab-" + name).classList.add("active");
 }
 function fillSelect(id, values) {
   const sel = document.getElementById(id);
@@ -80,22 +128,31 @@ function esc(s) { return String(s).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<"
 
 function renderRecipes() {
   const q = document.getElementById("search").value.toLowerCase();
-  const cat = document.getElementById("filter-category").value;
   const slot = document.getElementById("filter-mealslot").value;
   const diet = document.getElementById("filter-diet").value;
-  const prefOnly = document.getElementById("filter-preferred").checked;
 
   const filtered = RECIPES.filter(r => {
     if (q && !r.name.toLowerCase().includes(q) && !r.ingredients.join(" ").toLowerCase().includes(q)) return false;
-    if (cat && r.category !== cat) return false;
+    if (currentCategory && r.category !== currentCategory) return false;
     if (slot && r.mealSlot !== slot) return false;
     if (diet && r.dietDay !== diet) return false;
-    if (prefOnly && !r.preferred) return false;
     return true;
   });
 
+  const preferred = filtered.filter(r => r.preferred);
+  const backlog = filtered.filter(r => !r.preferred);
+
   const grid = document.getElementById("recipe-grid");
-  grid.innerHTML = filtered.map(r => recipeCardHTML(r)).join("") || "<p>No recipes match these filters.</p>";
+  if (!filtered.length) {
+    grid.innerHTML = "<p>No recipes match these filters.</p>";
+    return;
+  }
+  let html = preferred.map(r => recipeCardHTML(r)).join("");
+  if (backlog.length) {
+    html += `<div class="backlog-divider"><span>Backlog</span></div>`;
+    html += backlog.map(r => recipeCardHTML(r)).join("");
+  }
+  grid.innerHTML = html;
 }
 
 function recipeCardHTML(r) {
@@ -107,14 +164,14 @@ function recipeCardHTML(r) {
     <div class="recipe-card">
       <h3>${esc(r.name)}</h3>
       <div class="badge-row">
-        <span class="badge">${esc(r.category)}</span>
-        <span class="badge">${esc(r.mealSlot)}</span>
+        <span class="badge">${esc(r.category)}</span><span class="sep">·</span>
+        <span class="badge">${esc(r.mealSlot)}</span><span class="sep">·</span>
         <span class="badge">${esc(r.dietDay)}</span>
-        ${!r.preferred ? '<span class="badge backlog">Backlog</span>' : ""}
+        ${!r.preferred ? '<span class="sep">·</span><span class="badge backlog">Backlog</span>' : ""}
       </div>
       <div class="macro-line">${macroLine}</div>
       <details>
-        <summary>Ingredients &amp; method</summary>
+        <summary>Ingredients &amp; Method</summary>
         <ul>${r.ingredients.map(i => `<li>${esc(i)}</li>`).join("")}</ul>
         <p>${esc(r.instructions)}</p>
       </details>

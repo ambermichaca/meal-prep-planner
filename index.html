@@ -4,13 +4,20 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Meal Prep Planner</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/style.css" />
 </head>
 <body>
   <header class="app-header">
-    <h1>Meal Prep Planner</h1>
+    <p class="kicker">Personal Kitchen Archive</p>
+    <h1>Meal&nbsp;Prep</h1>
     <nav class="tabs">
-      <button class="tab-btn active" data-tab="recipes">Recipe Book</button>
+      <div class="tab-dropdown" id="recipe-book-dropdown">
+        <button class="tab-btn active" data-tab="recipes" id="recipe-book-btn">Recipe Book</button>
+        <div class="dropdown-menu" id="category-menu"></div>
+      </div>
       <button class="tab-btn" data-tab="planner">Weekly Planner</button>
       <button class="tab-btn" data-tab="grocery">Grocery List</button>
     </nav>
@@ -20,13 +27,12 @@
     <!-- RECIPE BOOK -->
     <section id="tab-recipes" class="tab-panel active">
       <div class="filters">
-        <input type="text" id="search" placeholder="Search recipes..." />
-        <select id="filter-category"><option value="">All categories</option></select>
-        <select id="filter-mealslot"><option value="">All meal slots</option></select>
-        <select id="filter-diet"><option value="">Any diet day</option></select>
-        <label class="checkbox-label"><input type="checkbox" id="filter-preferred" /> Preferred only</label>
+        <input type="text" id="search" placeholder="Search recipes…" />
+        <select id="filter-mealslot"><option value="">All Meal Slots</option></select>
+        <select id="filter-diet"><option value="">Any Diet Day</option></select>
         <button id="add-recipe-btn">+ Add Recipe</button>
       </div>
+      <div id="active-category-tag"></div>
       <div id="recipe-grid" class="recipe-grid"></div>
     </section>
 
