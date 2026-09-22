@@ -31,6 +31,7 @@ async function init() {
   }
   setupFilters();
   setupCategoryMenu();
+  setupCategoryMenuTriggers();
   renderRecipes();
   renderPlanner();
   renderGrocery();
@@ -63,11 +64,16 @@ function setupFilters() {
   document.getElementById("category-list").innerHTML = cats.map(c => `<option value="${esc(c)}">`).join("");
 }
 
+function closeCategoryMenu() {
+  document.getElementById("category-menu").classList.remove("open");
+  document.getElementById("recipe-book-btn").setAttribute("aria-expanded", "false");
+}
+
 function setupCategoryMenu() {
   const cats = [...new Set(RECIPES.map(r => r.category))].sort();
   const menu = document.getElementById("category-menu");
-  const allBtn = `<button data-cat="" class="${currentCategory === "" ? "active" : ""}">All Categories</button>`;
-  const catBtns = cats.map(c => `<button data-cat="${esc(c)}" class="${currentCategory === c ? "active" : ""}">${esc(c)}</button>`).join("");
+  const allBtn = `<button role="menuitem" data-cat="" class="${currentCategory === "" ? "active" : ""}">All Categories</button>`;
+  const catBtns = cats.map(c => `<button role="menuitem" data-cat="${esc(c)}" class="${currentCategory === c ? "active" : ""}">${esc(c)}</button>`).join("");
   menu.innerHTML = allBtn + catBtns;
 
   menu.querySelectorAll("button").forEach(btn => {
@@ -78,20 +84,28 @@ function setupCategoryMenu() {
       setupCategoryMenu();
       renderRecipes();
       renderActiveCategoryTag();
-      menu.classList.remove("open");
+      closeCategoryMenu();
     });
   });
+}
 
+// One-time listeners: the trigger button and outside-click/Escape handling
+// don't need to be re-bound every time setupCategoryMenu() redraws the menu items.
+function setupCategoryMenuTriggers() {
+  const menu = document.getElementById("category-menu");
   const recipeBookBtn = document.getElementById("recipe-book-btn");
-  recipeBookBtn.onclick = (e) => {
+  recipeBookBtn.addEventListener("click", (e) => {
     e.stopPropagation();
     if (document.getElementById("tab-recipes").classList.contains("active")) {
+      const willOpen = !menu.classList.contains("open");
       menu.classList.toggle("open");
+      recipeBookBtn.setAttribute("aria-expanded", String(willOpen));
     } else {
       switchTab("recipes");
     }
-  };
-  document.addEventListener("click", () => menu.classList.remove("open"));
+  });
+  document.addEventListener("click", closeCategoryMenu);
+  document.addEventListener("keydown", (e) => { if (e.key === "Escape") closeCategoryMenu(); });
 }
 
 function renderActiveCategoryTag() {
@@ -285,9 +299,11 @@ function renderGrocery() {
     const key = "gk-" + btoa(unescape(encodeURIComponent(ing))).replace(/[^a-zA-Z0-9]/g, "");
     const checked = groceryChecked[key] ? "checked" : "";
     return `<li class="${groceryChecked[key] ? "checked" : ""}" data-key="${key}">
-      <input type="checkbox" ${checked} />
-      <div><div class="item-name">${esc(ing)}</div>
-      <div class="item-sources">Used in: ${sources.map(esc).join(", ")}</div></div>
+      <label>
+        <input type="checkbox" ${checked} />
+        <span><span class="item-name">${esc(ing)}</span>
+        <span class="item-sources">Used in: ${sources.map(esc).join(", ")}</span></span>
+      </label>
     </li>`;
   }).join("");
 

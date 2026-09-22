@@ -1,10 +1,11 @@
 :root {
   --bg: #f7f5f0;
   --card-bg: #ffffff;
-  --border: #e3ded2;
-  --divider: #cfc8b8;
+  --border: #948669;      /* used for anything functional: input/card/grid boundaries — WCAG 1.4.11 (3:1) */
+  --divider: #948669;     /* same value on purpose: one border color everywhere for consistency */
   --text: #171512;
-  --text-muted: #8a8172;
+  --text-muted: #6b6255;  /* darkened from the original draft — WCAG AA 4.5:1 for body text */
+  --backlog: #8f5a37;     /* darkened from the original draft — WCAG AA 4.5:1 for body text */
   --ink: #171512;
   --ink-contrast: #f7f5f0;
   --radius: 2px;
@@ -13,6 +14,22 @@
 }
 
 * { box-sizing: border-box; }
+
+.sr-only {
+  position: absolute;
+  width: 1px; height: 1px;
+  padding: 0; margin: -1px;
+  overflow: hidden;
+  clip: rect(0,0,0,0);
+  white-space: nowrap;
+  border: 0;
+}
+
+a:focus-visible, button:focus-visible, input:focus-visible,
+select:focus-visible, textarea:focus-visible, [tabindex]:focus-visible {
+  outline: 2px solid var(--ink);
+  outline-offset: 2px;
+}
 
 body {
   margin: 0;
@@ -122,6 +139,7 @@ main { max-width: 1140px; margin: 0 auto; padding: 36px 32px 80px; }
 .filters {
   display: flex;
   flex-wrap: wrap;
+  justify-content: space-between;
   gap: 14px;
   margin-bottom: 8px;
   align-items: center;
@@ -140,7 +158,11 @@ input[type="text"], select, input[type="number"], textarea {
   color: var(--text);
 }
 
-select { text-transform: uppercase; letter-spacing: 0.04em; font-size: 0.72rem; }
+.filters select { text-transform: uppercase; letter-spacing: 0.04em; font-size: 0.72rem; }
+/* Planner/dialog selects intentionally keep normal case — their options are recipe
+   names, and shouting a whole recipe title in uppercase hurts scanability (hierarchy). */
+
+.filter-group { display: flex; flex-wrap: wrap; gap: 14px; align-items: center; }
 
 #search { flex: 1; min-width: 200px; font-style: italic; }
 #search::placeholder { color: var(--text-muted); }
@@ -217,12 +239,15 @@ button:hover { background: transparent; color: var(--ink); }
   color: var(--text-muted);
   margin-bottom: 12px;
 }
-.badge-row .sep { margin: 0 6px; color: var(--divider); }
-.badge.backlog { color: #a9704a; }
+.badge-row .sep { margin: 0 6px; color: var(--border); }
+.badge.backlog { color: var(--backlog); }
 
+/* Macros get more visual weight than the metadata badges above them — this is the
+   number a macro-tracking app exists to show, so it shouldn't read as secondary. */
 .macro-line {
-  font-size: 0.8rem;
-  color: var(--text-muted);
+  font-size: 0.88rem;
+  font-weight: 400;
+  color: var(--text);
   margin-bottom: 14px;
   padding-bottom: 14px;
   border-bottom: 1px solid var(--border);
@@ -241,7 +266,7 @@ button:hover { background: transparent; color: var(--ink); }
 .recipe-note {
   font-size: 0.76rem;
   font-style: italic;
-  color: #a9704a;
+  color: var(--backlog);
   margin-top: 10px;
 }
 
@@ -338,16 +363,20 @@ button:hover { background: transparent; color: var(--ink); }
 .grocery-list li {
   background: var(--card-bg);
   border-bottom: 1px solid var(--border);
-  padding: 16px 4px;
   margin: 0;
+}
+
+.grocery-list li label {
   display: flex;
   align-items: baseline;
   gap: 14px;
+  padding: 16px 4px;
+  cursor: pointer;
 }
 
 .grocery-list li.checked { opacity: 0.4; text-decoration: line-through; }
-.grocery-list .item-name { font-weight: 500; letter-spacing: 0.01em; }
-.grocery-list .item-sources { font-size: 0.74rem; color: var(--text-muted); font-style: italic; }
+.grocery-list .item-name { display: block; font-weight: 500; letter-spacing: 0.01em; }
+.grocery-list .item-sources { display: block; font-size: 0.74rem; color: var(--text-muted); font-style: italic; }
 
 /* ---------- Dialog ---------- */
 dialog {
@@ -374,7 +403,8 @@ dialog h2 { font-family: var(--serif); font-weight: 600; font-style: italic; fon
 #add-recipe-form input, #add-recipe-form select, #add-recipe-form textarea { width: 100%; margin-top: 5px; }
 fieldset { margin-top: 16px; border: 1px solid var(--border); padding: 12px; }
 legend { font-size: 0.68rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-muted); }
-fieldset label { display: inline-block; width: 45%; }
+fieldset .macro-fields { display: grid; grid-template-columns: 1fr 1fr; gap: 0 16px; }
+fieldset label { margin-top: 10px; }
 .dialog-actions { display: flex; gap: 10px; margin-top: 22px; }
 #add-recipe-output { margin-top: 14px; font-family: ui-monospace, monospace; font-size: 0.74rem; }
 
@@ -382,10 +412,11 @@ fieldset label { display: inline-block; width: 45%; }
   :root {
     --bg: #16140f;
     --card-bg: #201d17;
-    --border: #35311f;
-    --divider: #4a442e;
+    --border: #6b6449;    /* kept at 3:1+ against both dark backgrounds, same reasoning as light mode */
+    --divider: #6b6449;
     --text: #ece7da;
     --text-muted: #a49c86;
+    --backlog: #e0a876;
     --ink: #ece7da;
     --ink-contrast: #16140f;
   }

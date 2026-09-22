@@ -15,8 +15,8 @@
     <h1>Meal&nbsp;Prep</h1>
     <nav class="tabs">
       <div class="tab-dropdown" id="recipe-book-dropdown">
-        <button class="tab-btn active" data-tab="recipes" id="recipe-book-btn">Recipe Book</button>
-        <div class="dropdown-menu" id="category-menu"></div>
+        <button class="tab-btn active" data-tab="recipes" id="recipe-book-btn" aria-haspopup="true" aria-expanded="false">Recipe Book</button>
+        <div class="dropdown-menu" id="category-menu" role="menu" aria-label="Filter by category"></div>
       </div>
       <button class="tab-btn" data-tab="planner">Weekly Planner</button>
       <button class="tab-btn" data-tab="grocery">Grocery List</button>
@@ -27,9 +27,14 @@
     <!-- RECIPE BOOK -->
     <section id="tab-recipes" class="tab-panel active">
       <div class="filters">
-        <input type="text" id="search" placeholder="Search recipes…" />
-        <select id="filter-mealslot"><option value="">All Meal Slots</option></select>
-        <select id="filter-diet"><option value="">Any Diet Day</option></select>
+        <div class="filter-group" role="search">
+          <label for="search" class="sr-only">Search recipes</label>
+          <input type="text" id="search" placeholder="Search recipes…" />
+          <label for="filter-mealslot" class="sr-only">Filter by meal slot</label>
+          <select id="filter-mealslot"><option value="">All Meal Slots</option></select>
+          <label for="filter-diet" class="sr-only">Filter by diet day</label>
+          <select id="filter-diet"><option value="">Any Diet Day</option></select>
+        </div>
         <button id="add-recipe-btn">+ Add Recipe</button>
       </div>
       <div id="active-category-tag"></div>
@@ -78,11 +83,13 @@
       <label>Instructions <textarea name="instructions" rows="3"></textarea></label>
       <fieldset>
         <legend>Macros per serving (optional)</legend>
-        <label>Protein (g) <input name="protein_g" type="number" step="0.1" /></label>
-        <label>Fat (g) <input name="fat_g" type="number" step="0.1" /></label>
-        <label>Carb (g) <input name="carb_g" type="number" step="0.1" /></label>
-        <label>Fiber (g) <input name="fiber_g" type="number" step="0.1" /></label>
-        <label>Calories <input name="calories" type="number" step="1" /></label>
+        <div class="macro-fields">
+          <label>Protein (g) <input name="protein_g" type="number" step="0.1" /></label>
+          <label>Fat (g) <input name="fat_g" type="number" step="0.1" /></label>
+          <label>Carb (g) <input name="carb_g" type="number" step="0.1" /></label>
+          <label>Fiber (g) <input name="fiber_g" type="number" step="0.1" /></label>
+          <label>Calories <input name="calories" type="number" step="1" /></label>
+        </div>
       </fieldset>
       <label class="checkbox-label"><input type="checkbox" name="preferred" checked /> Preferred (show by default)</label>
       <div class="dialog-actions">
