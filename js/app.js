@@ -32,10 +32,10 @@ async function init() {
   setupFilters();
   setupCategoryMenu();
   setupCategoryMenuTriggers();
+  setupModeSwitch();
   renderRecipes();
   renderPlanner();
   renderGrocery();
-  setupTabs();
   setupAddRecipeDialog();
   document.getElementById("search").addEventListener("input", renderRecipes);
   document.getElementById("filter-mealslot").addEventListener("change", renderRecipes);
@@ -45,14 +45,19 @@ async function init() {
       plan = {}; saveJSON("mealprep.plan", plan); renderPlanner(); renderGrocery();
     }
   });
-  document.getElementById("regen-grocery-btn").addEventListener("click", renderGrocery);
 }
 
-function setupTabs() {
-  document.querySelectorAll(".tab-btn").forEach(btn => {
-    if (btn.id === "recipe-book-btn") return; // handled in setupCategoryMenu (also toggles the dropdown)
-    btn.addEventListener("click", () => switchTab(btn.dataset.tab));
-  });
+// ---------------- MODE SWITCH (Meal Prep vs Recipes — two fully separate views) ----------------
+function setupModeSwitch() {
+  document.getElementById("mealprep-btn").addEventListener("click", () => switchMode("mealprep"));
+  // recipes-btn is wired in setupCategoryMenuTriggers (it also owns the category dropdown)
+}
+
+function switchMode(name) {
+  document.querySelectorAll(".mode-heading").forEach(b => b.classList.remove("active"));
+  document.querySelectorAll(".mode-panel").forEach(p => p.classList.remove("active"));
+  document.getElementById(name === "mealprep" ? "mealprep-btn" : "recipes-btn").classList.add("active");
+  document.getElementById("mode-" + name).classList.add("active");
 }
 
 function setupFilters() {
@@ -66,7 +71,7 @@ function setupFilters() {
 
 function closeCategoryMenu() {
   document.getElementById("category-menu").classList.remove("open");
-  document.getElementById("recipe-book-btn").setAttribute("aria-expanded", "false");
+  document.getElementById("recipes-btn").setAttribute("aria-expanded", "false");
 }
 
 function setupCategoryMenu() {
@@ -80,7 +85,7 @@ function setupCategoryMenu() {
     btn.addEventListener("click", (e) => {
       e.stopPropagation();
       currentCategory = btn.dataset.cat;
-      switchTab("recipes");
+      switchMode("recipes");
       setupCategoryMenu();
       renderRecipes();
       renderActiveCategoryTag();
@@ -93,15 +98,15 @@ function setupCategoryMenu() {
 // don't need to be re-bound every time setupCategoryMenu() redraws the menu items.
 function setupCategoryMenuTriggers() {
   const menu = document.getElementById("category-menu");
-  const recipeBookBtn = document.getElementById("recipe-book-btn");
-  recipeBookBtn.addEventListener("click", (e) => {
+  const recipesBtn = document.getElementById("recipes-btn");
+  recipesBtn.addEventListener("click", (e) => {
     e.stopPropagation();
-    if (document.getElementById("tab-recipes").classList.contains("active")) {
+    if (document.getElementById("mode-recipes").classList.contains("active")) {
       const willOpen = !menu.classList.contains("open");
       menu.classList.toggle("open");
-      recipeBookBtn.setAttribute("aria-expanded", String(willOpen));
+      recipesBtn.setAttribute("aria-expanded", String(willOpen));
     } else {
-      switchTab("recipes");
+      switchMode("recipes");
     }
   });
   document.addEventListener("click", closeCategoryMenu);
@@ -122,13 +127,6 @@ function renderActiveCategoryTag() {
   });
 }
 
-function switchTab(name) {
-  document.querySelectorAll(".tab-btn").forEach(b => b.classList.remove("active"));
-  document.querySelectorAll(".tab-panel").forEach(p => p.classList.remove("active"));
-  (document.getElementById(name === "recipes" ? "recipe-book-btn" : null) ||
-    [...document.querySelectorAll(".tab-btn")].find(b => b.dataset.tab === name)).classList.add("active");
-  document.getElementById("tab-" + name).classList.add("active");
-}
 function fillSelect(id, values) {
   const sel = document.getElementById(id);
   values.forEach(v => {
@@ -140,6 +138,7 @@ function fillSelect(id, values) {
 
 function esc(s) { return String(s).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c])); }
 
+// ---------------- RECIPES ----------------
 function renderRecipes() {
   const q = document.getElementById("search").value.toLowerCase();
   const slot = document.getElementById("filter-mealslot").value;
@@ -169,11 +168,14 @@ function renderRecipes() {
   grid.innerHTML = html;
 }
 
-function recipeCardHTML(r) {
+function macroLineText(r) {
   const m = r.macros;
-  const macroLine = m
+  return m
     ? `${m.protein_g}g protein · ${m.fat_g}g fat · ${m.carb_g}g carb · ${m.fiber_g}g fiber · ${m.calories} kcal`
     : "Macros not yet calculated";
+}
+
+function recipeCardHTML(r) {
   return `
     <div class="recipe-card">
       <h3>${esc(r.name)}</h3>
@@ -183,7 +185,7 @@ function recipeCardHTML(r) {
         <span class="badge">${esc(r.dietDay)}</span>
         ${!r.preferred ? '<span class="sep">·</span><span class="badge backlog">Backlog</span>' : ""}
       </div>
-      <div class="macro-line">${macroLine}</div>
+      <div class="macro-line">${macroLineText(r)}</div>
       <details>
         <summary>Ingredients &amp; Method</summary>
         <ul>${r.ingredients.map(i => `<li>${esc(i)}</li>`).join("")}</ul>
@@ -191,6 +193,12 @@ function recipeCardHTML(r) {
       </details>
       ${r.notes ? `<div class="recipe-note">${esc(r.notes)}</div>` : ""}
     </div>`;
+}
+
+function tooltipHTML(r) {
+  return `<span class="tt-name">${esc(r.name)}</span>
+    <span class="tt-macros">${macroLineText(r)}</span>
+    <ul>${r.ingredients.map(i => `<li>${esc(i)}</li>`).join("")}</ul>`;
 }
 
 // ---------------- PLANNER ----------------
@@ -204,8 +212,8 @@ function renderPlanner() {
         plan[day] = plan[day] || {};
         plan[day][slot] = el.value || null;
         saveJSON("mealprep.plan", plan);
-        updateDayTotals(day);
-        updateWeekTotals();
+        renderPlanner();   // redraws info-tooltips + totals for the whole grid
+        renderGrocery();   // grocery list stays in sync with the planner automatically
       });
     });
     updateDayTotals(day);
@@ -223,11 +231,15 @@ function dayCardHTML(day) {
       ${SLOTS.map(slot => {
         const options = RECIPES.filter(r => r.mealSlot === SLOT_TO_MEALSLOT[slot]);
         const current = selections[slot] || "";
+        const currentRecipe = current ? RECIPES.find(r => r.id === current) : null;
         return `<label>${slot}
-          <select id="${selectId(day, slot)}">
-            <option value="">—</option>
-            ${options.map(r => `<option value="${r.id}" ${r.id === current ? "selected" : ""}>${esc(r.name)}</option>`).join("")}
-          </select>
+          <div class="slot-row">
+            <select id="${selectId(day, slot)}">
+              <option value="">—</option>
+              ${options.map(r => `<option value="${r.id}" ${r.id === current ? "selected" : ""}>${esc(r.name)}</option>`).join("")}
+            </select>
+            ${currentRecipe ? `<span class="info-trigger" tabindex="0" aria-label="Full recipe breakdown for ${esc(currentRecipe.name)}">ⓘ<span class="tooltip-panel">${tooltipHTML(currentRecipe)}</span></span>` : ""}
+          </div>
         </label>`;
       }).join("")}
       <div class="day-totals" id="daytotals-${day}"></div>
@@ -273,36 +285,150 @@ function updateWeekTotals() {
 
 function round1(n) { return Math.round(n * 10) / 10; }
 
+// ---------------- INGREDIENT PARSING (for grocery consolidation) ----------------
+// Best-effort: parses a leading "quantity + unit" off a free-text ingredient line
+// (e.g. "4 oz chicken breast" -> qty 4, unit oz, item "chicken breast"). Lines that
+// don't start with a recognizable quantity (side-dish references, "to taste", etc.)
+// still get listed on the grocery list, just without a summed amount.
+const VOLUME_TO_TBSP = { tsp: 1 / 3, tbsp: 1, cup: 16 };
+const UNIT_LABEL = {
+  oz: n => "oz", cup: n => n === 1 ? "cup" : "cups", tbsp: n => "tbsp", tsp: n => "tsp",
+  slice: n => n === 1 ? "slice" : "slices", scoop: n => n === 1 ? "scoop" : "scoops",
+  serving: n => n === 1 ? "serving" : "servings", clove: n => n === 1 ? "clove" : "cloves",
+  packet: n => n === 1 ? "packet" : "packets"
+};
+
+function parseQtyToken(tok) {
+  tok = tok.trim();
+  const mixed = tok.match(/^(\d+)\s+(\d+)\/(\d+)$/);
+  if (mixed) return parseInt(mixed[1]) + parseInt(mixed[2]) / parseInt(mixed[3]);
+  const frac = tok.match(/^(\d+)\/(\d+)$/);
+  if (frac) return parseInt(frac[1]) / parseInt(frac[2]);
+  const num = parseFloat(tok);
+  return isNaN(num) ? null : num;
+}
+
+function canonicalUnit(u) {
+  u = u.toLowerCase().replace(/\.$/, "");
+  if (/^oz|ounce/.test(u)) return "oz";
+  if (/^cup/.test(u)) return "cup";
+  if (/^tbsp|tablespoon/.test(u)) return "tbsp";
+  if (/^tsp|teaspoon/.test(u)) return "tsp";
+  if (/^slice/.test(u)) return "slice";
+  if (/^scoop/.test(u)) return "scoop";
+  if (/^serving/.test(u)) return "serving";
+  if (/^clove/.test(u)) return "clove";
+  if (/^packet/.test(u)) return "packet";
+  return null; // "whole" and unrecognized units fall back to unitless counting
+}
+
+function parseIngredientLine(rawText) {
+  const text = rawText.replace(/\([^)]*\)/g, "").trim();
+  const numTok = "(?:\\d+\\s+\\d+\\/\\d+|\\d+\\/\\d+|\\d+(?:\\.\\d+)?)";
+  const qtyRegex = new RegExp(`^(${numTok})(\\s*-\\s*(${numTok}))?\\s*`);
+  const m = text.match(qtyRegex);
+  if (!m) {
+    const item = (text || rawText).split(",")[0].trim().toLowerCase();
+    return { qty: null, unit: null, item: item || rawText.toLowerCase(), display: rawText };
+  }
+  let qty = parseQtyToken(m[1]);
+  if (m[3]) {
+    const hi = parseQtyToken(m[3]);
+    if (hi != null) qty = (qty + hi) / 2;
+  }
+  const rest = text.slice(m[0].length);
+  const unitRegex = /^([a-z]+)\.?\s*/i;
+  const um = rest.match(unitRegex);
+  let unit = null, itemPart = rest;
+  if (um) {
+    const c = canonicalUnit(um[1]);
+    if (c) { unit = c; itemPart = rest.slice(um[0].length); }
+  }
+  const item = (itemPart || rest).split(",")[0].trim().toLowerCase() || rawText.toLowerCase();
+  return { qty, unit, item, display: rawText };
+}
+
+function formatQty(n) {
+  const r = Math.round(n * 100) / 100;
+  return String(r);
+}
+
+function formatVolumeTbsp(totalTbsp) {
+  const cups = Math.floor(totalTbsp / 16 + 1e-9);
+  const remTbsp = totalTbsp - cups * 16;
+  const parts = [];
+  if (cups > 0) parts.push(`${formatQty(cups)} ${UNIT_LABEL.cup(cups)}`);
+  if (remTbsp > 0.01) parts.push(`${formatQty(remTbsp)} tbsp`);
+  return parts.join(" ");
+}
+
 // ---------------- GROCERY LIST ----------------
 function renderGrocery() {
-  const counts = {}; // ingredient text -> [{recipeName, day, slot}]
+  const groups = {}; // normalized item -> { displayName, entries:[{qty,unit,source}], noQty:[{source}] }
+
   DAYS.forEach(day => {
     const selections = plan[day] || {};
     Object.entries(selections).forEach(([slot, id]) => {
       if (!id) return;
       const r = RECIPES.find(x => x.id === id);
       if (!r) return;
-      r.ingredients.forEach(ing => {
-        if (!counts[ing]) counts[ing] = [];
-        counts[ing].push(`${r.name} (${day.slice(0,3)} ${slot})`);
+      const source = `${r.name} (${day.slice(0, 3)} ${slot})`;
+      r.ingredients.forEach(rawLine => {
+        const parsed = parseIngredientLine(rawLine);
+        if (!groups[parsed.item]) groups[parsed.item] = { displayName: parsed.item, entries: [], noQty: [] };
+        if (parsed.qty != null) {
+          groups[parsed.item].entries.push({ qty: parsed.qty, unit: parsed.unit, source });
+        } else {
+          groups[parsed.item].noQty.push({ source, display: rawLine });
+        }
       });
     });
   });
 
-  const items = Object.entries(counts).sort((a, b) => a[0].localeCompare(b[0]));
+  const keys = Object.keys(groups).sort();
   const list = document.getElementById("grocery-list");
-  if (!items.length) {
-    list.innerHTML = "<p>Nothing planned yet — pick some meals in the Weekly Planner tab first.</p>";
+  if (!keys.length) {
+    list.innerHTML = "<p>Nothing planned yet — pick some meals above and this list fills in automatically.</p>";
     return;
   }
-  list.innerHTML = items.map(([ing, sources]) => {
-    const key = "gk-" + btoa(unescape(encodeURIComponent(ing))).replace(/[^a-zA-Z0-9]/g, "");
-    const checked = groceryChecked[key] ? "checked" : "";
-    return `<li class="${groceryChecked[key] ? "checked" : ""}" data-key="${key}">
+
+  list.innerHTML = keys.map(key => {
+    const g = groups[key];
+    let volumeTotal = 0;
+    const otherBuckets = {}; // unit (or "×" for unitless count) -> total
+    g.entries.forEach(e => {
+      if (e.unit && VOLUME_TO_TBSP[e.unit] != null) {
+        volumeTotal += e.qty * VOLUME_TO_TBSP[e.unit];
+      } else if (e.unit) {
+        otherBuckets[e.unit] = (otherBuckets[e.unit] || 0) + e.qty;
+      } else {
+        otherBuckets["×"] = (otherBuckets["×"] || 0) + e.qty;
+      }
+    });
+
+    const qtyParts = [];
+    if (volumeTotal > 0.01) qtyParts.push(formatVolumeTbsp(volumeTotal));
+    Object.entries(otherBuckets).forEach(([u, total]) => {
+      qtyParts.push(u === "×" ? formatQty(total) : `${formatQty(total)} ${UNIT_LABEL[u] ? UNIT_LABEL[u](total) : u}`);
+    });
+    const qtyLabel = qtyParts.length ? qtyParts.join(" + ") + " — " : "";
+
+    const allSources = [...g.entries.map(e => e.source), ...g.noQty.map(e => e.source)];
+    const unspecifiedNote = g.noQty.length
+      ? `<br>Also needed (amount not specified): ${g.noQty.map(e => esc(e.display)).join("; ")}`
+      : "";
+
+    const displayName = key.charAt(0).toUpperCase() + key.slice(1);
+    const keyHash = "gk-" + btoa(unescape(encodeURIComponent(key))).replace(/[^a-zA-Z0-9]/g, "");
+    const checked = groceryChecked[keyHash] ? "checked" : "";
+
+    return `<li class="${groceryChecked[keyHash] ? "checked" : ""}" data-key="${keyHash}">
       <label>
         <input type="checkbox" ${checked} />
-        <span><span class="item-name">${esc(ing)}</span>
-        <span class="item-sources">Used in: ${sources.map(esc).join(", ")}</span></span>
+        <span>
+          <span class="item-name">${esc(displayName)}${qtyLabel ? ` <span class="item-qty">— ${esc(qtyLabel.replace(/ — $/, ""))}</span>` : ""}</span>
+          <span class="item-sources">Used in: ${allSources.map(esc).join(", ")}${unspecifiedNote}</span>
+        </span>
       </label>
     </li>`;
   }).join("");
@@ -325,7 +451,7 @@ function setupAddRecipeDialog() {
   document.getElementById("add-recipe-form").addEventListener("submit", e => {
     e.preventDefault();
     const fd = new FormData(e.target);
-    const hasMacros = ["protein_g","fat_g","carb_g","fiber_g","calories"].some(k => fd.get(k));
+    const hasMacros = ["protein_g", "fat_g", "carb_g", "fiber_g", "calories"].some(k => fd.get(k));
     const macros = hasMacros ? {
       protein_g: parseFloat(fd.get("protein_g")) || 0,
       fat_g: parseFloat(fd.get("fat_g")) || 0,

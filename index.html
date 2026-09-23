@@ -12,20 +12,33 @@
 <body>
   <header class="app-header">
     <p class="kicker">Personal Kitchen Archive</p>
-    <h1>Meal&nbsp;Prep</h1>
-    <nav class="tabs">
-      <div class="tab-dropdown" id="recipe-book-dropdown">
-        <button class="tab-btn active" data-tab="recipes" id="recipe-book-btn" aria-haspopup="true" aria-expanded="false">Recipe Book</button>
+    <nav class="mode-switch" aria-label="Section">
+      <button class="mode-heading active" data-mode="mealprep" id="mealprep-btn">Meal&nbsp;Prep</button>
+      <span class="mode-sep">/</span>
+      <div class="tab-dropdown" id="recipes-dropdown">
+        <button class="mode-heading" data-mode="recipes" id="recipes-btn" aria-haspopup="true" aria-expanded="false">Recipes</button>
         <div class="dropdown-menu" id="category-menu" role="menu" aria-label="Filter by category"></div>
       </div>
-      <button class="tab-btn" data-tab="planner">Weekly Planner</button>
-      <button class="tab-btn" data-tab="grocery">Grocery List</button>
     </nav>
   </header>
 
   <main>
-    <!-- RECIPE BOOK -->
-    <section id="tab-recipes" class="tab-panel active">
+    <!-- MEAL PREP: weekly planner + grocery list, combined -->
+    <section id="mode-mealprep" class="mode-panel active">
+      <div class="planner-toolbar">
+        <button id="clear-week-btn">Clear week</button>
+        <span class="hint">Selections are saved in this browser automatically. Hover the ⓘ on a picked meal for its full breakdown.</span>
+      </div>
+      <div id="planner-grid" class="planner-grid"></div>
+      <div id="week-totals" class="totals-box"></div>
+
+      <h2 class="section-heading">Grocery List</h2>
+      <p class="hint">Combines quantities for the same ingredient across every meal picked above. Check items off as you shop.</p>
+      <ul id="grocery-list" class="grocery-list"></ul>
+    </section>
+
+    <!-- RECIPES: full recipe book, only reachable via the header -->
+    <section id="mode-recipes" class="mode-panel">
       <div class="filters">
         <div class="filter-group" role="search">
           <label for="search" class="sr-only">Search recipes</label>
@@ -39,25 +52,6 @@
       </div>
       <div id="active-category-tag"></div>
       <div id="recipe-grid" class="recipe-grid"></div>
-    </section>
-
-    <!-- WEEKLY PLANNER -->
-    <section id="tab-planner" class="tab-panel">
-      <div class="planner-toolbar">
-        <button id="clear-week-btn">Clear week</button>
-        <span class="hint">Selections are saved in this browser automatically.</span>
-      </div>
-      <div id="planner-grid" class="planner-grid"></div>
-      <div id="week-totals" class="totals-box"></div>
-    </section>
-
-    <!-- GROCERY LIST -->
-    <section id="tab-grocery" class="tab-panel">
-      <div class="planner-toolbar">
-        <button id="regen-grocery-btn">Regenerate from this week's plan</button>
-        <span class="hint">Check items off as you shop.</span>
-      </div>
-      <ul id="grocery-list" class="grocery-list"></ul>
     </section>
   </main>
 
@@ -79,7 +73,7 @@
         </select>
       </label>
       <label>Servings <input name="servings" type="number" min="1" value="1" /></label>
-      <label>Ingredients (one per line)<textarea name="ingredients" rows="4"></textarea></label>
+      <label>Ingredients (one per line — start each with a quantity + unit where you can, e.g. "4 oz chicken breast", so the grocery list can total it up)<textarea name="ingredients" rows="4"></textarea></label>
       <label>Instructions <textarea name="instructions" rows="3"></textarea></label>
       <fieldset>
         <legend>Macros per serving (optional)</legend>

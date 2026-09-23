@@ -45,9 +45,10 @@ body {
 
 /* ---------- Header ---------- */
 .app-header {
-  padding: 40px 32px 0;
+  padding: 40px 32px 20px;
   background: var(--bg);
   text-align: center;
+  border-bottom: 1px solid var(--divider);
 }
 
 .kicker {
@@ -58,45 +59,39 @@ body {
   color: var(--text-muted);
 }
 
-.app-header h1 {
-  margin: 0 0 28px;
-  font-family: var(--serif);
-  font-style: italic;
-  font-weight: 500;
-  font-size: 2.6rem;
-  letter-spacing: 0.02em;
-  color: var(--ink);
-}
-
-.tabs {
+/* Two top-level modes, presented as the page's own wordmark — clicking "Recipes"
+   is the only way into the recipe book; the two are otherwise fully separate views. */
+.mode-switch {
   display: flex;
   justify-content: center;
-  gap: 44px;
-  border-top: 1px solid var(--divider);
-  border-bottom: 1px solid var(--divider);
-  padding: 0;
+  align-items: baseline;
+  gap: 18px;
+  margin: 0 0 28px;
+}
+
+.mode-sep {
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: 1.6rem;
+  color: var(--border);
 }
 
 .tab-dropdown { position: relative; }
 
-.tab-btn {
-  padding: 16px 2px;
+.mode-heading {
+  padding: 0;
   border: none;
   background: transparent;
-  font-family: var(--sans);
-  font-size: 0.76rem;
-  letter-spacing: 0.18em;
-  text-transform: uppercase;
+  font-family: var(--serif);
+  font-style: italic;
+  font-weight: 500;
+  font-size: 2.2rem;
+  letter-spacing: 0.02em;
   cursor: pointer;
   color: var(--text-muted);
-  border-bottom: 1px solid transparent;
-  margin-bottom: -1px;
 }
 
-.tab-btn.active {
-  color: var(--ink);
-  border-bottom-color: var(--ink);
-}
+.mode-heading.active { color: var(--ink); font-weight: 600; }
 
 .dropdown-menu {
   display: none;
@@ -135,10 +130,18 @@ body {
 .dropdown-menu button.active { color: var(--ink); font-weight: 500; }
 
 /* ---------- Layout ---------- */
-main { max-width: 1140px; margin: 0 auto; padding: 36px 32px 80px; }
+main { max-width: 1320px; margin: 0 auto; padding: 36px 32px 80px; }
 
-.tab-panel { display: none; }
-.tab-panel.active { display: block; }
+.mode-panel { display: none; }
+.mode-panel.active { display: block; }
+
+.section-heading {
+  font-family: var(--serif);
+  font-style: italic;
+  font-weight: 600;
+  font-size: 1.7rem;
+  margin: 44px 0 6px;
+}
 
 .filters {
   display: flex;
@@ -311,11 +314,25 @@ button:hover { background: transparent; color: var(--ink); }
 
 .hint { font-size: 0.78rem; color: var(--text-muted); font-style: italic; }
 
+/* Mobile-first: one column, comfortable spacing. Widens to all 7 days across
+   one row once there's room (see the min-width media query below). */
 .planner-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
-  gap: 20px;
+  grid-template-columns: 1fr;
+  gap: 16px;
   margin-bottom: 24px;
+}
+
+@media (min-width: 640px) {
+  .planner-grid { grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); }
+}
+
+@media (min-width: 980px) {
+  .planner-grid { grid-template-columns: repeat(7, 1fr); gap: 10px; }
+  .day-card { padding: 14px 10px; }
+  .day-card h4 { font-size: 0.95rem; }
+  .day-card label { font-size: 0.6rem; letter-spacing: 0.08em; margin-top: 9px; }
+  .day-card select { font-size: 0.68rem; padding: 7px 8px; }
 }
 
 .day-card {
@@ -343,6 +360,64 @@ button:hover { background: transparent; color: var(--ink); }
 }
 
 .day-card select { width: 100%; margin-top: 4px; font-size: 0.78rem; }
+
+.slot-row { display: flex; align-items: center; gap: 6px; margin-top: 4px; }
+.slot-row select { margin-top: 0; flex: 1; min-width: 0; }
+
+/* Info trigger + tooltip: a small "ⓘ" that reveals the full recipe breakdown on
+   hover or keyboard focus, so you don't have to leave the planner to check macros. */
+.info-trigger {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px; height: 18px;
+  flex: 0 0 auto;
+  border-radius: 50%;
+  border: 1px solid var(--border);
+  color: var(--text-muted);
+  font-size: 0.66rem;
+  font-style: italic;
+  font-family: var(--serif);
+  cursor: default;
+}
+
+.tooltip-panel {
+  display: none;
+  position: absolute;
+  bottom: calc(100% + 8px);
+  right: 0;
+  width: 240px;
+  background: var(--ink);
+  color: var(--ink-contrast);
+  border-radius: var(--radius);
+  padding: 14px 16px;
+  font-size: 0.76rem;
+  line-height: 1.5;
+  text-align: left;
+  box-shadow: var(--card-shadow);
+  z-index: 30;
+  text-transform: none;
+  letter-spacing: normal;
+}
+
+.info-trigger:hover .tooltip-panel,
+.info-trigger:focus-visible .tooltip-panel,
+.info-trigger:focus-within .tooltip-panel {
+  display: block;
+}
+
+.tooltip-panel .tt-name {
+  display: block;
+  font-family: var(--serif);
+  font-style: italic;
+  font-weight: 600;
+  font-size: 0.92rem;
+  margin-bottom: 6px;
+}
+.tooltip-panel .tt-macros { display: block; margin-bottom: 8px; opacity: 0.85; }
+.tooltip-panel ul { margin: 0; padding-left: 16px; }
+.tooltip-panel li { margin-bottom: 2px; }
 
 .day-totals {
   margin-top: 14px;
@@ -389,7 +464,8 @@ button:hover { background: transparent; color: var(--ink); }
 
 .grocery-list li.checked { opacity: 0.4; text-decoration: line-through; }
 .grocery-list .item-name { display: block; font-weight: 500; letter-spacing: 0.01em; }
-.grocery-list .item-sources { display: block; font-size: 0.74rem; color: var(--text-muted); font-style: italic; }
+.grocery-list .item-qty { font-weight: 400; color: var(--text-muted); }
+.grocery-list .item-sources { display: block; font-size: 0.74rem; color: var(--text-muted); font-style: italic; margin-top: 2px; }
 
 /* ---------- Dialog ---------- */
 dialog {
@@ -423,6 +499,7 @@ fieldset label { margin-top: 10px; }
 #add-recipe-output { margin-top: 14px; font-family: ui-monospace, monospace; font-size: 0.74rem; }
 
 @media (max-width: 600px) {
-  .app-header h1 { font-size: 2rem; }
-  .tabs { gap: 24px; }
+  .mode-heading { font-size: 1.6rem; }
+  .mode-switch { gap: 12px; }
+  .tooltip-panel { width: 200px; right: -60px; }
 }
