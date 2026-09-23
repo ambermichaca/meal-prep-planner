@@ -69,6 +69,7 @@ Then visit `http://localhost:8000`. This restriction doesn't apply once it's liv
 
 1. Commit and push changes to `main`.
 2. GitHub Pages is configured to deploy automatically from `main` — the live site updates within a minute or two of a push.
+3. **If the change touches `css/style.css` or `js/app.js`, bump the `?v=` query string on their `<link>`/`<script>` tags in `index.html`.** GitHub Pages serves everything with `cache-control: max-age=600` — without a changing version string, a browser that visited in the last 10 minutes can load fresh HTML alongside a stale cached CSS/JS pair (mismatched element IDs between old JS and new HTML caused exactly this once — broken layout, JS erroring out partway through, half the page not rendering). A plain content edit to `data/recipes.json` doesn't need a version bump.
 
 ## Data storage — what's saved where
 

@@ -29,22 +29,36 @@ async function init() {
       "<p>Couldn't load recipes.json. If you opened this file directly (file://), run a local server instead — e.g. <code>python3 -m http.server</code> in this folder, then visit localhost. GitHub Pages doesn't have this issue.</p>";
     return;
   }
-  setupFilters();
-  setupCategoryMenu();
-  setupCategoryMenuTriggers();
-  setupModeSwitch();
-  renderRecipes();
-  renderPlanner();
-  renderGrocery();
-  setupAddRecipeDialog();
-  document.getElementById("search").addEventListener("input", renderRecipes);
-  document.getElementById("filter-mealslot").addEventListener("change", renderRecipes);
-  document.getElementById("filter-diet").addEventListener("change", renderRecipes);
-  document.getElementById("clear-week-btn").addEventListener("click", () => {
-    if (confirm("Clear all meals selected for this week?")) {
-      plan = {}; saveJSON("mealprep.plan", plan); renderPlanner(); renderGrocery();
-    }
-  });
+  // Everything after this point touches specific element IDs — if a future edit
+  // renames one on only one side (HTML vs JS), or a stale cached JS/CSS pair loads
+  // (see the ?v= cache-buster on the <script>/<link> tags), fail loudly here
+  // instead of silently leaving the page half-rendered like it did before.
+  try {
+    setupFilters();
+    setupCategoryMenu();
+    setupCategoryMenuTriggers();
+    setupModeSwitch();
+    renderRecipes();
+    renderPlanner();
+    renderGrocery();
+    setupAddRecipeDialog();
+    document.getElementById("search").addEventListener("input", renderRecipes);
+    document.getElementById("filter-mealslot").addEventListener("change", renderRecipes);
+    document.getElementById("filter-diet").addEventListener("change", renderRecipes);
+    document.getElementById("clear-week-btn").addEventListener("click", () => {
+      if (confirm("Clear all meals selected for this week?")) {
+        plan = {}; saveJSON("mealprep.plan", plan); renderPlanner(); renderGrocery();
+      }
+    });
+  } catch (e) {
+    document.body.insertAdjacentHTML("afterbegin",
+      `<div style="background:#8f5a37;color:#fff;padding:14px 20px;font-family:sans-serif;font-size:0.85rem;">
+        Something didn't load correctly (${esc(e.message)}). Try a hard refresh
+        (Cmd+Shift+R / Ctrl+Shift+R) — GitHub Pages caches files for 10 minutes,
+        so a normal reload can serve mismatched HTML/CSS/JS right after a deploy.
+      </div>`);
+    throw e;
+  }
 }
 
 // ---------------- MODE SWITCH (Meal Prep vs Recipes — two fully separate views) ----------------
