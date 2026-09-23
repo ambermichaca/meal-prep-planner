@@ -45,10 +45,9 @@ body {
 
 /* ---------- Header ---------- */
 .app-header {
-  padding: 40px 32px 20px;
+  padding: 40px 32px 0;
   background: var(--bg);
   text-align: center;
-  border-bottom: 1px solid var(--divider);
 }
 
 .kicker {
@@ -59,39 +58,45 @@ body {
   color: var(--text-muted);
 }
 
-/* Two top-level modes, presented as the page's own wordmark — clicking "Recipes"
-   is the only way into the recipe book; the two are otherwise fully separate views. */
-.mode-switch {
-  display: flex;
-  justify-content: center;
-  align-items: baseline;
-  gap: 18px;
+.app-header h1 {
   margin: 0 0 28px;
-}
-
-.mode-sep {
   font-family: var(--serif);
   font-style: italic;
-  font-size: 1.6rem;
-  color: var(--border);
+  font-weight: 500;
+  font-size: 2.6rem;
+  letter-spacing: 0.02em;
+  color: var(--ink);
+}
+
+.tabs {
+  display: flex;
+  justify-content: center;
+  gap: 44px;
+  border-top: 1px solid var(--divider);
+  border-bottom: 1px solid var(--divider);
+  padding: 0;
 }
 
 .tab-dropdown { position: relative; }
 
-.mode-heading {
-  padding: 0;
+.tab-btn {
+  padding: 16px 2px;
   border: none;
   background: transparent;
-  font-family: var(--serif);
-  font-style: italic;
-  font-weight: 500;
-  font-size: 2.2rem;
-  letter-spacing: 0.02em;
+  font-family: var(--sans);
+  font-size: 0.76rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
   cursor: pointer;
   color: var(--text-muted);
+  border-bottom: 1px solid transparent;
+  margin-bottom: -1px;
 }
 
-.mode-heading.active { color: var(--ink); font-weight: 600; }
+.tab-btn.active {
+  color: var(--ink);
+  border-bottom-color: var(--ink);
+}
 
 .dropdown-menu {
   display: none;
@@ -498,8 +503,52 @@ fieldset label { margin-top: 10px; }
 .dialog-actions { display: flex; gap: 10px; margin-top: 22px; }
 #add-recipe-output { margin-top: 14px; font-family: ui-monospace, monospace; font-size: 0.74rem; }
 
+.extras-add-row {
+  display: flex;
+  gap: 10px;
+  margin: 14px 0 16px;
+}
+.extras-add-row select { flex: 1; }
+
+.extras-list { list-style: none; padding: 0; margin: 0 0 8px; }
+
+.extras-list li {
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--card-shadow);
+  margin: 0 0 10px;
+  padding: 12px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.extras-list .extra-name { font-weight: 500; }
+.extras-list .extra-meta {
+  font-size: 0.68rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin-left: 10px;
+}
+
+.extras-list .extra-remove {
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  padding: 2px 6px;
+  font-size: 1rem;
+  letter-spacing: normal;
+  text-transform: none;
+}
+.extras-list .extra-remove:hover { color: var(--backlog); background: none; }
+
+.extras-empty { font-size: 0.85rem; color: var(--text-muted); font-style: italic; }
+
 @media (max-width: 600px) {
-  .mode-heading { font-size: 1.6rem; }
-  .mode-switch { gap: 12px; }
+  .app-header h1 { font-size: 2rem; }
+  .tabs { gap: 24px; }
   .tooltip-panel { width: 200px; right: -60px; }
 }

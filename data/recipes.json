@@ -90,7 +90,7 @@
   {
     "id": "bf4-banana-bread",
     "name": "Banana Bread (baked Option 4)",
-    "category": "Bakery",
+    "category": "Meal Prep",
     "mealSlot": "Breakfast",
     "dietDay": "Both",
     "preferred": true,

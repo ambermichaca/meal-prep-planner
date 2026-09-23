@@ -12,38 +12,24 @@
        browser that visited in the last 10 min can load fresh HTML alongside a
        stale cached CSS/JS pair — bump this string on every deploy that touches
        css/style.css or js/app.js. -->
-  <link rel="stylesheet" href="css/style.css?v=2026092302" />
+  <link rel="stylesheet" href="css/style.css?v=2026092303" />
 </head>
 <body>
   <header class="app-header">
     <p class="kicker">Personal Kitchen Archive</p>
-    <nav class="mode-switch" aria-label="Section">
-      <button class="mode-heading active" data-mode="mealprep" id="mealprep-btn">Meal&nbsp;Prep</button>
-      <span class="mode-sep">/</span>
+    <h1>Meal&nbsp;Prep</h1>
+    <nav class="tabs">
       <div class="tab-dropdown" id="recipes-dropdown">
-        <button class="mode-heading" data-mode="recipes" id="recipes-btn" aria-haspopup="true" aria-expanded="false">Recipes</button>
+        <button class="tab-btn active" data-mode="recipes" id="recipes-btn" aria-haspopup="true" aria-expanded="false">Recipes</button>
         <div class="dropdown-menu" id="category-menu" role="menu" aria-label="Filter by category"></div>
       </div>
+      <button class="tab-btn" data-mode="planner" id="planner-btn">Weekly Planner</button>
     </nav>
   </header>
 
   <main>
-    <!-- MEAL PREP: weekly planner + grocery list, combined -->
-    <section id="mode-mealprep" class="mode-panel active">
-      <div class="planner-toolbar">
-        <button id="clear-week-btn">Clear week</button>
-        <span class="hint">Selections are saved in this browser automatically. Hover the ⓘ on a picked meal for its full breakdown.</span>
-      </div>
-      <div id="planner-grid" class="planner-grid"></div>
-      <div id="week-totals" class="totals-box"></div>
-
-      <h2 class="section-heading">Grocery List</h2>
-      <p class="hint">Combines quantities for the same ingredient across every meal picked above. Check items off as you shop.</p>
-      <ul id="grocery-list" class="grocery-list"></ul>
-    </section>
-
-    <!-- RECIPES: full recipe book, only reachable via the header -->
-    <section id="mode-recipes" class="mode-panel">
+    <!-- RECIPES: full recipe book -->
+    <section id="mode-recipes" class="mode-panel active">
       <div class="filters">
         <div class="filter-group" role="search">
           <label for="search" class="sr-only">Search recipes</label>
@@ -57,6 +43,29 @@
       </div>
       <div id="active-category-tag"></div>
       <div id="recipe-grid" class="recipe-grid"></div>
+    </section>
+
+    <!-- WEEKLY PLANNER: day grid (Meal Prep recipes only) + extra selections (any recipe) + grocery list, combined -->
+    <section id="mode-planner" class="mode-panel">
+      <div class="planner-toolbar">
+        <button id="clear-week-btn">Clear week</button>
+        <span class="hint">Only recipes tagged "Meal Prep" show up here. Selections save automatically. Hover the ⓘ on a picked meal for its full breakdown.</span>
+      </div>
+      <div id="planner-grid" class="planner-grid"></div>
+      <div id="week-totals" class="totals-box"></div>
+
+      <h2 class="section-heading">Extra Selections</h2>
+      <p class="hint">Anything outside the meal-prep rotation — any recipe, any category, add as many as you like. Included in the grocery list below; not counted in the macro totals above, since these aren't part of the tracked plan.</p>
+      <div class="extras-add-row">
+        <label for="extras-select" class="sr-only">Add a recipe to extra selections</label>
+        <select id="extras-select"></select>
+        <button id="extras-add-btn">+ Add</button>
+      </div>
+      <ul id="extras-list" class="extras-list"></ul>
+
+      <h2 class="section-heading">Grocery List</h2>
+      <p class="hint">Combines quantities for the same ingredient across every meal picked above (including Extra Selections). Check items off as you shop.</p>
+      <ul id="grocery-list" class="grocery-list"></ul>
     </section>
   </main>
 
@@ -100,6 +109,6 @@
     </form>
   </dialog>
 
-  <script src="js/app.js?v=2026092302"></script>
+  <script src="js/app.js?v=2026092303"></script>
 </body>
 </html>

@@ -5,8 +5,11 @@ const SLOT_TO_MEALSLOT = {
   "Snack 1": "Snack", "Snack 2": "Snack", "Snack 3": "Snack"
 };
 
+const MEAL_PREP_CATEGORY = "Meal Prep";
+
 let RECIPES = [];
 let plan = loadJSON("mealprep.plan", {});
+let extras = loadJSON("mealprep.extras", []); // array of recipe ids, duplicates allowed
 let groceryChecked = loadJSON("mealprep.groceryChecked", {});
 let currentCategory = "";
 
@@ -38,8 +41,10 @@ async function init() {
     setupCategoryMenu();
     setupCategoryMenuTriggers();
     setupModeSwitch();
+    setupExtras();
     renderRecipes();
     renderPlanner();
+    renderExtras();
     renderGrocery();
     setupAddRecipeDialog();
     document.getElementById("search").addEventListener("input", renderRecipes);
@@ -61,16 +66,16 @@ async function init() {
   }
 }
 
-// ---------------- MODE SWITCH (Meal Prep vs Recipes — two fully separate views) ----------------
+// ---------------- MODE SWITCH (Recipes vs Weekly Planner, one nav bar) ----------------
 function setupModeSwitch() {
-  document.getElementById("mealprep-btn").addEventListener("click", () => switchMode("mealprep"));
+  document.getElementById("planner-btn").addEventListener("click", () => switchMode("planner"));
   // recipes-btn is wired in setupCategoryMenuTriggers (it also owns the category dropdown)
 }
 
 function switchMode(name) {
-  document.querySelectorAll(".mode-heading").forEach(b => b.classList.remove("active"));
+  document.querySelectorAll(".tab-btn").forEach(b => b.classList.remove("active"));
   document.querySelectorAll(".mode-panel").forEach(p => p.classList.remove("active"));
-  document.getElementById(name === "mealprep" ? "mealprep-btn" : "recipes-btn").classList.add("active");
+  document.getElementById(name === "planner" ? "planner-btn" : "recipes-btn").classList.add("active");
   document.getElementById("mode-" + name).classList.add("active");
 }
 
@@ -243,7 +248,7 @@ function dayCardHTML(day) {
     <div class="day-card">
       <h4>${day}</h4>
       ${SLOTS.map(slot => {
-        const options = RECIPES.filter(r => r.mealSlot === SLOT_TO_MEALSLOT[slot]);
+        const options = RECIPES.filter(r => r.mealSlot === SLOT_TO_MEALSLOT[slot] && r.category === MEAL_PREP_CATEGORY);
         const current = selections[slot] || "";
         const currentRecipe = current ? RECIPES.find(r => r.id === current) : null;
         return `<label>${slot}
@@ -298,6 +303,46 @@ function updateWeekTotals() {
 }
 
 function round1(n) { return Math.round(n * 10) / 10; }
+
+// ---------------- EXTRA SELECTIONS (any recipe, any category — outside the tracked plan) ----------------
+function setupExtras() {
+  const sel = document.getElementById("extras-select");
+  const sorted = [...RECIPES].sort((a, b) => a.name.localeCompare(b.name));
+  sel.innerHTML = sorted.map(r => `<option value="${r.id}">${esc(r.name)} — ${esc(r.category)}</option>`).join("");
+
+  document.getElementById("extras-add-btn").addEventListener("click", () => {
+    if (!sel.value) return;
+    extras.push(sel.value);
+    saveJSON("mealprep.extras", extras);
+    renderExtras();
+    renderGrocery();
+  });
+}
+
+function renderExtras() {
+  const list = document.getElementById("extras-list");
+  if (!extras.length) {
+    list.innerHTML = `<li class="extras-empty" style="list-style:none;border:none;box-shadow:none;padding:0;">Nothing added yet.</li>`;
+    return;
+  }
+  list.innerHTML = extras.map((id, i) => {
+    const r = RECIPES.find(x => x.id === id);
+    if (!r) return "";
+    return `<li>
+      <span><span class="extra-name">${esc(r.name)}</span><span class="extra-meta">${esc(r.category)} · ${esc(r.mealSlot)}</span></span>
+      <button class="extra-remove" data-index="${i}" aria-label="Remove ${esc(r.name)}">×</button>
+    </li>`;
+  }).join("");
+
+  list.querySelectorAll(".extra-remove").forEach(btn => {
+    btn.addEventListener("click", () => {
+      extras.splice(parseInt(btn.dataset.index), 1);
+      saveJSON("mealprep.extras", extras);
+      renderExtras();
+      renderGrocery();
+    });
+  });
+}
 
 // ---------------- INGREDIENT PARSING (for grocery consolidation) ----------------
 // Best-effort: parses a leading "quantity + unit" off a free-text ingredient line
@@ -396,6 +441,21 @@ function renderGrocery() {
           groups[parsed.item].noQty.push({ source, display: rawLine });
         }
       });
+    });
+  });
+
+  extras.forEach(id => {
+    const r = RECIPES.find(x => x.id === id);
+    if (!r) return;
+    const source = `${r.name} (Extra)`;
+    r.ingredients.forEach(rawLine => {
+      const parsed = parseIngredientLine(rawLine);
+      if (!groups[parsed.item]) groups[parsed.item] = { displayName: parsed.item, entries: [], noQty: [] };
+      if (parsed.qty != null) {
+        groups[parsed.item].entries.push({ qty: parsed.qty, unit: parsed.unit, source });
+      } else {
+        groups[parsed.item].noQty.push({ source, display: rawLine });
+      }
     });
   });
 

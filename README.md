@@ -4,10 +4,15 @@ A personal recipe book + weekly meal planner + grocery list generator. Plain HTM
 
 ## What's here
 
-The app is two fully separate modes, switched via the header ("Meal Prep" / "Recipes") — there's no way into the recipe book except by clicking "Recipes":
+One page, one nav bar with two tabs:
 
-- **Meal Prep** — the Weekly Planner and Grocery List, combined on one page (the grocery list is derived entirely from the planner, so splitting them into separate tabs never made sense). Pick a recipe for each of 6 slots (Breakfast, Snack 1, Lunch, Snack 2, Dinner, Snack 3) across all 7 days — on a wide/desktop viewport the 7 days lay out in a single row; narrower viewports wrap responsively. Hover (or focus, via keyboard) the ⓘ next to any picked meal for its full macro + ingredient breakdown without leaving the planner. Shows running macro totals per day and for the whole week. Below that, the grocery list auto-combines ingredient quantities across every selected recipe for the week (see "Grocery consolidation" below) and updates live as you change picks. Your selections and checked-off items are saved automatically in this browser (not synced across devices — see "Data storage" below).
-- **Recipes** — the full recipe book. Filter by category via a dropdown menu under the "Recipes" heading itself (not a `<select>`), plus meal slot, diet day, search, with preferred recipes shown first and backlog recipes pushed below a divider line.
+- **Recipes** — the full recipe book. Filter by category via a dropdown menu under the "Recipes" tab itself (not a `<select>`), plus meal slot, diet day, search, with preferred recipes shown first and backlog recipes pushed below a divider line.
+- **Weekly Planner** — the day grid, extra selections, and grocery list, all on one page (the grocery list is derived entirely from the other two, so splitting it into its own tab never made sense):
+  - **Day grid**: pick a recipe for each of 6 slots (Breakfast, Snack 1, Lunch, Snack 2, Dinner, Snack 3) across all 7 days — on a wide/desktop viewport the 7 days lay out in a single row; narrower viewports wrap responsively. **Only recipes tagged `category: "Meal Prep"` show up in these dropdowns** — this is the tracked fitness plan, not the whole recipe book. Hover (or focus, via keyboard) the ⓘ next to any picked meal for its full macro + ingredient breakdown without leaving the planner. Shows running macro totals per day and for the whole week.
+  - **Extra Selections**: a free-form add list for anything outside the meal-prep rotation — any recipe, any category, add as many as you want (duplicates allowed, e.g. baking two batches of something). These feed the grocery list but are **not** counted in the macro totals above, since they're explicitly not part of the tracked plan.
+  - **Grocery List**: auto-combines ingredient quantities across every day-grid pick *and* every extra selection (see "Grocery list consolidation" below), updating live as either changes.
+
+  Your selections, extras, and checked-off grocery items are saved automatically in this browser (not synced across devices — see "Data storage" below).
 
 ## Grocery list consolidation
 
