@@ -12,7 +12,7 @@
        browser that visited in the last 10 min can load fresh HTML alongside a
        stale cached CSS/JS pair — bump this string on every deploy that touches
        css/style.css or js/app.js. -->
-  <link rel="stylesheet" href="css/style.css?v=2026111301" />
+  <link rel="stylesheet" href="css/style.css?v=2026111302" />
 </head>
 <body>
   <header class="app-header">
@@ -45,6 +45,42 @@
       </div>
       <div id="active-category-tag"></div>
       <div id="recipe-grid" class="recipe-grid"></div>
+      <details class="recipe-sources" id="recipe-sources">
+        <summary>Where to find more recipes</summary>
+        <p class="hint">Picked from the creators behind your saved recipes. Cookbook links open a Bookshop.org search.</p>
+        <div class="sources-block">
+          <h3>Sources you already save from</h3>
+          <table class="sources-table">
+            <thead><tr><th scope="col">Source</th><th scope="col">Website</th><th scope="col">Cookbook</th></tr></thead>
+            <tbody>
+            <tr><th scope="row">Moribyan (Mariam Ishaq)</th><td><a href="https://moribyan.com" target="_blank" rel="noopener">moribyan.com</a></td><td><span class="muted">—</span></td></tr>
+            <tr><th scope="row">Ninja Kitchen</th><td><a href="https://www.ninjakitchen.com/recipes" target="_blank" rel="noopener">ninjakitchen.com/recipes</a></td><td><span class="muted">—</span></td></tr>
+            <tr><th scope="row">Well Made by Kiley</th><td><a href="https://www.wellmadebykiley.com" target="_blank" rel="noopener">wellmadebykiley.com</a></td><td><span class="muted">—</span></td></tr>
+            <tr><th scope="row">Broma Bakery</th><td><a href="https://bromabakery.com" target="_blank" rel="noopener">bromabakery.com</a></td><td><span class="muted">—</span></td></tr>
+            <tr><th scope="row">@notorious_foodie</th><td><a href="https://www.instagram.com/notorious_foodie/" target="_blank" rel="noopener">instagram.com/notorious_foodie</a></td><td><span class="muted">—</span></td></tr>
+            <tr><th scope="row">Grandbaby Cakes</th><td><a href="https://grandbaby-cakes.com" target="_blank" rel="noopener">grandbaby-cakes.com</a></td><td><a href="https://bookshop.org/search?keywords=Grandbaby+Cakes+Jocelyn+Delk+Adams" target="_blank" rel="noopener"><cite>Grandbaby Cakes</cite></a></td></tr>
+            <tr><th scope="row">Butternut Bakery</th><td><a href="https://butternutbakeryblog.com" target="_blank" rel="noopener">butternutbakeryblog.com</a></td><td><a href="https://bookshop.org/search?keywords=Butternut+Bakery" target="_blank" rel="noopener"><cite>Butternut Bakery cookbook</cite></a></td></tr>
+            <tr><th scope="row">A Cozy Kitchen</th><td><a href="https://www.acozykitchen.com" target="_blank" rel="noopener">acozykitchen.com</a></td><td><a href="https://bookshop.org/search?keywords=Adrianna+Adarme" target="_blank" rel="noopener"><cite>A Cozy Kitchen cookbook</cite></a></td></tr>
+            <tr><th scope="row">Alexandra's Kitchen</th><td><a href="https://alexandracooks.com" target="_blank" rel="noopener">alexandracooks.com</a></td><td><a href="https://bookshop.org/search?keywords=Bread+Toast+Crumbs+Alexandra+Stafford" target="_blank" rel="noopener"><cite>Bread Toast Crumbs</cite></a></td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="sources-block">
+          <h3>New sources that match your taste</h3>
+          <table class="sources-table">
+            <thead><tr><th scope="col">Cuisine</th><th scope="col">Website</th><th scope="col">Cookbook</th></tr></thead>
+            <tbody>
+            <tr><th scope="row">Mediterranean / Middle Eastern</th><td><a href="https://ottolenghi.co.uk" target="_blank" rel="noopener">ottolenghi.co.uk</a></td><td><a href="https://bookshop.org/search?keywords=Falastin+Sami+Tamimi" target="_blank" rel="noopener"><cite>Falastin</cite></a> · <a href="https://bookshop.org/search?keywords=Ottolenghi+Simple" target="_blank" rel="noopener"><cite>Ottolenghi Simple</cite></a></td></tr>
+            <tr><th scope="row">Mexican</th><td><a href="https://patijinich.com" target="_blank" rel="noopener">patijinich.com</a></td><td><a href="https://bookshop.org/search?keywords=Treasures+of+the+Mexican+Table+Jinich" target="_blank" rel="noopener"><cite>Treasures of the Mexican Table</cite></a> · <a href="https://bookshop.org/search?keywords=Mi+Cocina+Rick+Martinez" target="_blank" rel="noopener"><cite>Mi Cocina</cite></a></td></tr>
+            <tr><th scope="row">Chinese</th><td><a href="https://thewoksoflife.com" target="_blank" rel="noopener">thewoksoflife.com</a></td><td><a href="https://bookshop.org/search?keywords=The+Woks+of+Life+cookbook" target="_blank" rel="noopener"><cite>The Woks of Life</cite></a></td></tr>
+            <tr><th scope="row">Thai</th><td><a href="https://hot-thai-kitchen.com" target="_blank" rel="noopener">hot-thai-kitchen.com</a></td><td><a href="https://bookshop.org/search?keywords=Hot+Thai+Kitchen+Pailin" target="_blank" rel="noopener"><cite>Hot Thai Kitchen</cite></a></td></tr>
+            <tr><th scope="row">High-protein / meal prep</th><td><a href="https://www.skinnytaste.com" target="_blank" rel="noopener">skinnytaste.com</a></td><td><a href="https://bookshop.org/search?keywords=Skinnytaste+Meal+Prep" target="_blank" rel="noopener"><cite>Skinnytaste Meal Prep</cite></a></td></tr>
+            <tr><th scope="row">Baking reference</th><td><a href="https://sallysbakingaddiction.com" target="_blank" rel="noopener">sallysbakingaddiction.com</a></td><td><a href="https://bookshop.org/search?keywords=Sally%27s+Baking+Addiction" target="_blank" rel="noopener"><cite>Sally's Baking Addiction</cite></a></td></tr>
+            <tr><th scope="row">Baking reference</th><td><a href="https://www.kingarthurbaking.com/recipes" target="_blank" rel="noopener">kingarthurbaking.com/recipes</a></td><td><span class="muted">—</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </details>
     </section>
 
     <!-- WEEKLY PLANNER: day grid (Meal Prep recipes only) + extra selections (any recipe) + grocery list, combined -->
@@ -116,6 +152,6 @@
     </form>
   </dialog>
 
-  <script src="js/app.js?v=2026111301"></script>
+  <script src="js/app.js?v=2026111302"></script>
 </body>
 </html>
