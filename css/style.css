@@ -174,7 +174,7 @@ input[type="text"], select, input[type="number"], textarea {
 /* Planner/dialog selects intentionally keep normal case — their options are recipe
    names, and shouting a whole recipe title in uppercase hurts scanability (hierarchy). */
 
-.filter-group { display: flex; flex-wrap: wrap; gap: 14px; align-items: center; }
+.filter-group { display: flex; flex-wrap: wrap; gap: 14px; align-items: center; flex: 1; max-width: 520px; }
 
 #search { flex: 1; min-width: 200px; font-style: italic; }
 #search::placeholder { color: var(--text-muted); }
@@ -204,15 +204,62 @@ button:hover { background: transparent; color: var(--ink); }
 }
 #add-recipe-cancel:hover { border-color: var(--ink); color: var(--ink); }
 
-#active-category-tag:empty { display: none; }
-#active-category-tag {
+/* ---------- Checkbox filters ---------- */
+.filter-checks {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding: 20px 0 22px;
+  border-bottom: 1px solid var(--border);
+}
+.check-group {
+  margin: 0;
+  padding: 0;
+  border: none;
+}
+.check-group legend {
+  float: left;
+  width: 84px;
+  padding: 9px 0 0;
+  font-size: 0.66rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+.check-chips { display: flex; flex-wrap: wrap; gap: 8px; margin-left: 92px; }
+.check-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 6px 12px 6px 9px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: var(--card-bg);
+  font-size: 0.8rem;
+  cursor: pointer;
+  user-select: none;
+  transition: background 0.15s, border-color 0.15s;
+}
+.check-chip:hover { border-color: var(--ink); }
+.check-chip input { margin: 0; width: 15px; height: 15px; accent-color: var(--ink); cursor: pointer; }
+.check-chip:has(input:checked) { border-color: var(--ink); background: var(--bg); font-weight: 500; }
+.check-chip:has(input:focus-visible) { outline: 2px solid var(--ink); outline-offset: 2px; }
+.check-count { font-size: 0.7rem; color: var(--text-muted); font-weight: 300; }
+
+@media (max-width: 600px) {
+  .check-group legend { float: none; width: 100%; padding: 0; margin-bottom: 8px; }
+  .check-chips { margin-left: 0; }
+}
+
+#filter-status:empty { display: none; }
+#filter-status {
   margin: 18px 0 -6px;
   font-size: 0.72rem;
   letter-spacing: 0.1em;
   text-transform: uppercase;
   color: var(--text-muted);
 }
-#active-category-tag button {
+#filter-status button {
   border: none;
   background: none;
   color: var(--ink);

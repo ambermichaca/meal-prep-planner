@@ -12,7 +12,7 @@
        browser that visited in the last 10 min can load fresh HTML alongside a
        stale cached CSS/JS pair — bump this string on every deploy that touches
        css/style.css or js/app.js. -->
-  <link rel="stylesheet" href="css/style.css?v=2026111302" />
+  <link rel="stylesheet" href="css/style.css?v=2026111303" />
 </head>
 <body>
   <header class="app-header">
@@ -34,16 +34,11 @@
         <div class="filter-group" role="search">
           <label for="search" class="sr-only">Search recipes</label>
           <input type="text" id="search" placeholder="Search recipes…" />
-          <label for="filter-category" class="sr-only">Filter by food category</label>
-          <select id="filter-category"><option value="">All Categories</option></select>
-          <label for="filter-mealslot" class="sr-only">Filter by meal slot</label>
-          <select id="filter-mealslot"><option value="">All Meal Slots</option></select>
-          <label for="filter-diet" class="sr-only">Filter by diet day</label>
-          <select id="filter-diet"><option value="">Any Diet Day</option></select>
         </div>
         <button id="add-recipe-btn">+ Add Recipe</button>
       </div>
-      <div id="active-category-tag"></div>
+      <div id="filter-checks" class="filter-checks"></div>
+      <div id="filter-status" class="filter-status" aria-live="polite"></div>
       <div id="recipe-grid" class="recipe-grid"></div>
       <details class="recipe-sources" id="recipe-sources">
         <summary>Where to find more recipes</summary>
@@ -152,6 +147,6 @@
     </form>
   </dialog>
 
-  <script src="js/app.js?v=2026111302"></script>
+  <script src="js/app.js?v=2026111303"></script>
 </body>
 </html>

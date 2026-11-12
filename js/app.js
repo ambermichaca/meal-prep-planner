@@ -11,7 +11,13 @@ let RECIPES = [];
 let plan = loadJSON("mealprep.plan", {});
 let extras = loadJSON("mealprep.extras", []); // array of recipe ids, duplicates allowed
 let groceryChecked = loadJSON("mealprep.groceryChecked", {});
-let currentCategory = "";
+// Checkbox filters: several boxes in one group = match ANY of them; across groups = match ALL.
+const FILTER_GROUPS = [
+  { key: "category", label: "Category" },
+  { key: "mealSlot", label: "Meal" },
+  { key: "dietDay", label: "Diet day" }
+];
+const filterSel = { category: new Set(), mealSlot: new Set(), dietDay: new Set() };
 
 function loadJSON(key, fallback) {
   try {
@@ -49,8 +55,6 @@ async function init() {
     setupAddRecipeDialog();
     setupRecipeView();
     document.getElementById("search").addEventListener("input", renderRecipes);
-    document.getElementById("filter-mealslot").addEventListener("change", renderRecipes);
-    document.getElementById("filter-diet").addEventListener("change", renderRecipes);
     document.getElementById("clear-week-btn").addEventListener("click", () => {
       if (confirm("Clear all meals selected for this week?")) {
         plan = {}; saveJSON("mealprep.plan", plan); renderPlanner(); renderGrocery();
@@ -81,19 +85,44 @@ function switchMode(name) {
 }
 
 function setupFilters() {
-  const slots = [...new Set(RECIPES.map(r => r.mealSlot))].sort();
-  const diets = [...new Set(RECIPES.map(r => r.dietDay))].sort();
-  fillSelect("filter-mealslot", slots);
-  fillSelect("filter-diet", diets);
-  const cats = [...new Set(RECIPES.map(r => r.category))].sort();
-  fillSelect("filter-category", cats);
-  document.getElementById("filter-category").addEventListener("change", e => {
-    currentCategory = e.target.value;
-    setupCategoryMenu();
-    renderRecipes();
-    renderActiveCategoryTag();
+  const box = document.getElementById("filter-checks");
+  box.innerHTML = FILTER_GROUPS.map(g => {
+    const counts = {};
+    RECIPES.forEach(r => { counts[r[g.key]] = (counts[r[g.key]] || 0) + 1; });
+    const values = Object.keys(counts).sort();
+    return `<fieldset class="check-group">
+      <legend>${g.label}</legend>
+      <div class="check-chips">${values.map(v => `<label class="check-chip">
+        <input type="checkbox" data-group="${g.key}" value="${esc(v)}" />
+        <span>${esc(v)}</span><span class="check-count">${counts[v]}</span>
+      </label>`).join("")}</div>
+    </fieldset>`;
+  }).join("");
+  box.addEventListener("change", e => {
+    const cb = e.target;
+    if (!cb.dataset.group) return;
+    const set = filterSel[cb.dataset.group];
+    cb.checked ? set.add(cb.value) : set.delete(cb.value);
+    onFiltersChanged();
   });
+  const cats = [...new Set(RECIPES.map(r => r.category))].sort();
   document.getElementById("category-list").innerHTML = cats.map(c => `<option value="${esc(c)}">`).join("");
+}
+
+// Re-syncs everything that reflects the filter state: the checkboxes (the nav
+// category menu can change them too), the nav menu highlight, the grid and the status line.
+function onFiltersChanged() {
+  document.querySelectorAll("#filter-checks input[type=checkbox]").forEach(cb => {
+    cb.checked = filterSel[cb.dataset.group].has(cb.value);
+  });
+  setupCategoryMenu();
+  renderRecipes();
+}
+
+function clearFilters() {
+  Object.values(filterSel).forEach(set => set.clear());
+  document.getElementById("search").value = "";
+  onFiltersChanged();
 }
 
 function closeCategoryMenu() {
@@ -104,19 +133,20 @@ function closeCategoryMenu() {
 function setupCategoryMenu() {
   const cats = [...new Set(RECIPES.map(r => r.category))].sort();
   const menu = document.getElementById("category-menu");
-  const allBtn = `<button role="menuitem" data-cat="" class="${currentCategory === "" ? "active" : ""}">All Categories</button>`;
-  const catBtns = cats.map(c => `<button role="menuitem" data-cat="${esc(c)}" class="${currentCategory === c ? "active" : ""}">${esc(c)}</button>`).join("");
+  const sel = filterSel.category;
+  const allBtn = `<button role="menuitem" data-cat="" class="${sel.size === 0 ? "active" : ""}">All Categories</button>`;
+  const catBtns = cats.map(c => `<button role="menuitem" data-cat="${esc(c)}" class="${sel.size === 1 && sel.has(c) ? "active" : ""}">${esc(c)}</button>`).join("");
   menu.innerHTML = allBtn + catBtns;
 
   menu.querySelectorAll("button").forEach(btn => {
     btn.addEventListener("click", (e) => {
       e.stopPropagation();
-      currentCategory = btn.dataset.cat;
+      // The nav menu picks a single category (replacing any boxes ticked in that group).
+      filterSel.category.clear();
+      if (btn.dataset.cat) filterSel.category.add(btn.dataset.cat);
       switchMode("recipes");
-      setupCategoryMenu();
-      renderRecipes();
-      renderActiveCategoryTag();
       closeCategoryMenu();
+      onFiltersChanged();
     });
   });
 }
@@ -140,45 +170,21 @@ function setupCategoryMenuTriggers() {
   document.addEventListener("keydown", (e) => { if (e.key === "Escape") closeCategoryMenu(); });
 }
 
-function renderActiveCategoryTag() {
-  const tag = document.getElementById("active-category-tag");
-  document.getElementById("filter-category").value = currentCategory; // keep the toolbar dropdown in sync with the nav menu
-  tag.innerHTML = currentCategory
-    ? `Category: ${esc(currentCategory)} <button id="clear-category">Clear</button>`
-    : "";
-  const clearBtn = document.getElementById("clear-category");
-  if (clearBtn) clearBtn.addEventListener("click", () => {
-    currentCategory = "";
-    setupCategoryMenu();
-    renderRecipes();
-    renderActiveCategoryTag();
-  });
-}
-
-function fillSelect(id, values) {
-  const sel = document.getElementById(id);
-  values.forEach(v => {
-    const opt = document.createElement("option");
-    opt.value = v; opt.textContent = v;
-    sel.appendChild(opt);
-  });
-}
-
 function esc(s) { return String(s).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c])); }
 
 // ---------------- RECIPES ----------------
 function renderRecipes() {
   const q = document.getElementById("search").value.toLowerCase();
-  const slot = document.getElementById("filter-mealslot").value;
-  const diet = document.getElementById("filter-diet").value;
 
   const filtered = RECIPES.filter(r => {
     if (q && !r.name.toLowerCase().includes(q) && !r.ingredients.join(" ").toLowerCase().includes(q) && !r.category.toLowerCase().includes(q)) return false;
-    if (currentCategory && r.category !== currentCategory) return false;
-    if (slot && r.mealSlot !== slot) return false;
-    if (diet && r.dietDay !== diet) return false;
+    for (const g of FILTER_GROUPS) {
+      const set = filterSel[g.key];
+      if (set.size && !set.has(r[g.key])) return false;
+    }
     return true;
   });
+  renderFilterStatus(filtered.length, q);
 
   const preferred = filtered.filter(r => r.preferred);
   const backlog = filtered.filter(r => !r.preferred);
@@ -194,6 +200,16 @@ function renderRecipes() {
     html += backlog.map(r => recipeCardHTML(r)).join("");
   }
   grid.innerHTML = html;
+}
+
+function renderFilterStatus(shown, q) {
+  const active = q || Object.values(filterSel).some(set => set.size);
+  const el = document.getElementById("filter-status");
+  el.innerHTML = active
+    ? `Showing ${shown} of ${RECIPES.length} recipes <button type="button" id="clear-filters">Clear filters</button>`
+    : "";
+  const btn = document.getElementById("clear-filters");
+  if (btn) btn.addEventListener("click", clearFilters);
 }
 
 function macroLineText(r) {
