@@ -276,6 +276,12 @@ button:hover { background: transparent; color: var(--ink); }
 }
 .recipe-card ul { margin: 10px 0; padding-left: 18px; }
 .recipe-card p { color: var(--text-muted); white-space: pre-line; }
+.recipe-credit {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  margin-top: 10px;
+}
+
 .recipe-note {
   font-size: 0.76rem;
   font-style: italic;

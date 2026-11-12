@@ -210,6 +210,7 @@ function recipeCardHTML(r) {
         <ul>${r.ingredients.map(i => `<li>${esc(i)}</li>`).join("")}</ul>
         <p>${esc(r.instructions)}</p>
       </details>
+      ${r.credit ? `<div class="recipe-credit">Original recipe: ${esc(r.credit)}</div>` : ""}
       ${r.notes ? `<div class="recipe-note">${esc(r.notes)}</div>` : ""}
     </div>`;
 }
