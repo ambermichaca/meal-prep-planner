@@ -1685,6 +1685,42 @@
     "notes": "Macros are rough per-serving estimates. PREFILLED: sauce-making steps. Note says '2-2.5 lbs cheese per box'. Your 2022 Mac N Cheese note is still on hold until you check its images."
   },
   {
+    "id": "mac-n-cheese-2022",
+    "name": "Baked Mac N Cheese",
+    "category": "Comfort/Dinner",
+    "mealSlot": "Dinner",
+    "dietDay": "Off-plan",
+    "preferred": true,
+    "servings": 10,
+    "ingredients": [
+      "1 lb large elbow macaroni",
+      "1 block (8 oz) medium cheddar, grated",
+      "1 block (8 oz) sharp cheddar, grated",
+      "1 block (8 oz) mild white cheddar, grated",
+      "1 block (8 oz) Colby, Monterey Jack or Pepper Jack, grated",
+      "2 cans Campbell's Cheddar Cheese soup",
+      "1 stick (1/2 cup) butter, plus more for the pan",
+      "1/2 pint (1 cup) heavy cream",
+      "salt, to taste",
+      "garlic powder, to taste",
+      "paprika, to taste",
+      "Old Bay seasoning, to taste",
+      "ground mustard, to taste",
+      "Lawry's seasoned salt, to taste",
+      "black pepper, to taste"
+    ],
+    "instructions": "1. Preheat oven to 350°F and butter a baking pan.\n2. Boil large elbows until al dente, about 7 min. Drain.\n3. Cheese sauce: heat the heavy cream and butter until hot and the butter melts. Add the grated cheese blocks a handful at a time, stirring until melted and smooth, then stir in the 2 cans of cheddar cheese soup.\n4. Season the sauce with salt, garlic powder, paprika, Old Bay, ground mustard, Lawry's and pepper.\n5. Mix the sauce with the cooked pasta and pour into the buttered pan.\n6. Bake 25-30 min, then broil 2-5 min until the top is browned.",
+    "macros": {
+      "protein_g": 30,
+      "fat_g": 52,
+      "carb_g": 37,
+      "fiber_g": 2,
+      "calories": 740
+    },
+    "source": "Apple Notes (Mac N Cheese, 2022) + cheese sauce from the note's images, typed in by user",
+    "notes": "Macros are rough per-serving estimates. PREFILLED: pasta amount (1 lb), servings (10), and the order of adding the soup; seasoning amounts are to taste since the note doesn't give any."
+  },
+  {
     "id": "chilate",
     "name": "Chilate",
     "category": "Mexican",
