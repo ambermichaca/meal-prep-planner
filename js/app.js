@@ -47,6 +47,7 @@ async function init() {
     renderExtras();
     renderGrocery();
     setupAddRecipeDialog();
+    setupRecipeView();
     document.getElementById("search").addEventListener("input", renderRecipes);
     document.getElementById("filter-mealslot").addEventListener("change", renderRecipes);
     document.getElementById("filter-diet").addEventListener("change", renderRecipes);
@@ -85,6 +86,13 @@ function setupFilters() {
   fillSelect("filter-mealslot", slots);
   fillSelect("filter-diet", diets);
   const cats = [...new Set(RECIPES.map(r => r.category))].sort();
+  fillSelect("filter-category", cats);
+  document.getElementById("filter-category").addEventListener("change", e => {
+    currentCategory = e.target.value;
+    setupCategoryMenu();
+    renderRecipes();
+    renderActiveCategoryTag();
+  });
   document.getElementById("category-list").innerHTML = cats.map(c => `<option value="${esc(c)}">`).join("");
 }
 
@@ -134,6 +142,7 @@ function setupCategoryMenuTriggers() {
 
 function renderActiveCategoryTag() {
   const tag = document.getElementById("active-category-tag");
+  document.getElementById("filter-category").value = currentCategory; // keep the toolbar dropdown in sync with the nav menu
   tag.innerHTML = currentCategory
     ? `Category: ${esc(currentCategory)} <button id="clear-category">Clear</button>`
     : "";
@@ -164,7 +173,7 @@ function renderRecipes() {
   const diet = document.getElementById("filter-diet").value;
 
   const filtered = RECIPES.filter(r => {
-    if (q && !r.name.toLowerCase().includes(q) && !r.ingredients.join(" ").toLowerCase().includes(q)) return false;
+    if (q && !r.name.toLowerCase().includes(q) && !r.ingredients.join(" ").toLowerCase().includes(q) && !r.category.toLowerCase().includes(q)) return false;
     if (currentCategory && r.category !== currentCategory) return false;
     if (slot && r.mealSlot !== slot) return false;
     if (diet && r.dietDay !== diet) return false;
@@ -196,7 +205,7 @@ function macroLineText(r) {
 
 function recipeCardHTML(r) {
   return `
-    <div class="recipe-card">
+    <div class="recipe-card" data-id="${esc(r.id)}">
       <h3>${esc(r.name)}</h3>
       <div class="badge-row">
         <span class="badge">${esc(r.category)}</span><span class="sep">·</span>
@@ -205,14 +214,78 @@ function recipeCardHTML(r) {
         ${!r.preferred ? '<span class="sep">·</span><span class="badge backlog">Backlog</span>' : ""}
       </div>
       <div class="macro-line">${macroLineText(r)}</div>
-      <details>
-        <summary>Ingredients &amp; Method</summary>
-        <ul>${r.ingredients.map(i => `<li>${esc(i)}</li>`).join("")}</ul>
-        <p>${esc(r.instructions)}</p>
-      </details>
+      <button type="button" class="view-recipe-btn" data-id="${esc(r.id)}">View recipe</button>
+      ${r.credit ? `<div class="recipe-credit">Original recipe: ${esc(r.credit)}</div>` : ""}
+    </div>`;
+}
+
+// ---------------- FULL RECIPE VIEW ----------------
+// Splits the instructions text into steps. Most recipes are "1. ...\n2. ..." —
+// the leading numbers are stripped because the <ol> numbers them itself.
+function recipeSteps(text) {
+  return String(text || "")
+    .split("\n")
+    .map(s => s.replace(/^\s*\d+[.)]\s*/, "").trim())
+    .filter(Boolean);
+}
+
+function recipeViewHTML(r) {
+  const m = r.macros;
+  const tiles = m
+    ? [["Protein", m.protein_g + "g"], ["Carbs", m.carb_g + "g"], ["Fat", m.fat_g + "g"], ["Fiber", m.fiber_g + "g"], ["Calories", m.calories]]
+        .map(([k, v]) => `<div class="rv-tile"><span class="rv-tile-val">${esc(v)}</span><span class="rv-tile-key">${k}</span></div>`).join("")
+    : `<p class="rv-nomacros">Macros not yet calculated</p>`;
+  return `
+    <div class="rv-head">
+      <div>
+        <div class="badge-row">
+          <span class="badge">${esc(r.category)}</span><span class="sep">·</span>
+          <span class="badge">${esc(r.mealSlot)}</span><span class="sep">·</span>
+          <span class="badge">${esc(r.dietDay)}</span>
+          ${r.servings ? `<span class="sep">·</span><span class="badge">${esc(r.servings)} servings</span>` : ""}
+          ${!r.preferred ? '<span class="sep">·</span><span class="badge backlog">Backlog</span>' : ""}
+        </div>
+        <h2 id="rv-title">${esc(r.name)}</h2>
+      </div>
+      <button type="button" class="rv-close" aria-label="Close recipe">&times;</button>
+    </div>
+    <div class="rv-macros">${tiles}</div>
+    ${m ? `<p class="rv-per">Per serving</p>` : ""}
+    <div class="rv-body">
+      <section>
+        <h3>Ingredients</h3>
+        <ul class="rv-ingredients">${r.ingredients.map(i => `<li>${esc(i)}</li>`).join("")}</ul>
+      </section>
+      <section>
+        <h3>Method</h3>
+        <ol class="rv-steps">${recipeSteps(r.instructions).map(s => `<li>${esc(s)}</li>`).join("")}</ol>
+      </section>
+    </div>
+    ${r.credit || r.notes ? `<div class="rv-foot">
       ${r.credit ? `<div class="recipe-credit">Original recipe: ${esc(r.credit)}</div>` : ""}
       ${r.notes ? `<div class="recipe-note">${esc(r.notes)}</div>` : ""}
-    </div>`;
+    </div>` : ""}`;
+}
+
+function openRecipeView(id) {
+  const r = RECIPES.find(x => x.id === id);
+  if (!r) return;
+  const dialog = document.getElementById("recipe-view-dialog");
+  document.getElementById("recipe-view").innerHTML = recipeViewHTML(r);
+  dialog.querySelector(".rv-close").addEventListener("click", () => dialog.close());
+  dialog.showModal();
+  dialog.scrollTop = 0;
+}
+
+function setupRecipeView() {
+  const dialog = document.getElementById("recipe-view-dialog");
+  // One delegated listener: the grid is re-rendered on every filter change.
+  document.getElementById("recipe-grid").addEventListener("click", e => {
+    const card = e.target.closest(".recipe-card");
+    if (card) openRecipeView(card.dataset.id);
+  });
+  // Clicking the dimmed backdrop (the dialog element itself, outside its content) closes it.
+  dialog.addEventListener("click", e => { if (e.target === dialog) dialog.close(); });
 }
 
 function tooltipHTML(r) {
