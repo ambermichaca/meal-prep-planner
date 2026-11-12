@@ -86,18 +86,35 @@ function switchMode(name) {
 
 function setupFilters() {
   const box = document.getElementById("filter-checks");
+  // Each group is a <details> dropdown holding a list of checkboxes.
   box.innerHTML = FILTER_GROUPS.map(g => {
     const counts = {};
     RECIPES.forEach(r => { counts[r[g.key]] = (counts[r[g.key]] || 0) + 1; });
     const values = Object.keys(counts).sort();
-    return `<fieldset class="check-group">
-      <legend>${g.label}</legend>
-      <div class="check-chips">${values.map(v => `<label class="check-chip">
-        <input type="checkbox" data-group="${g.key}" value="${esc(v)}" />
-        <span>${esc(v)}</span><span class="check-count">${counts[v]}</span>
-      </label>`).join("")}</div>
-    </fieldset>`;
+    return `<details class="check-dd" data-group="${g.key}">
+      <summary><span class="check-dd-label">${g.label}</span><span class="check-dd-count"></span></summary>
+      <fieldset class="check-panel">
+        <legend class="sr-only">${g.label}</legend>
+        ${values.map(v => `<label class="check-row">
+          <input type="checkbox" data-group="${g.key}" value="${esc(v)}" />
+          <span>${esc(v)}</span><span class="check-count">${counts[v]}</span>
+        </label>`).join("")}
+      </fieldset>
+    </details>`;
   }).join("");
+  // Only one dropdown open at a time; close on outside click or Escape.
+  const dds = [...box.querySelectorAll(".check-dd")];
+  dds.forEach(dd => dd.addEventListener("toggle", () => {
+    if (dd.open) dds.forEach(o => { if (o !== dd) o.open = false; });
+  }));
+  document.addEventListener("click", e => {
+    if (!box.contains(e.target)) dds.forEach(dd => dd.open = false);
+  });
+  document.addEventListener("keydown", e => {
+    if (e.key !== "Escape") return;
+    const open = dds.find(dd => dd.open);
+    if (open) { open.open = false; open.querySelector("summary").focus(); }
+  });
   box.addEventListener("change", e => {
     const cb = e.target;
     if (!cb.dataset.group) return;
@@ -114,6 +131,11 @@ function setupFilters() {
 function onFiltersChanged() {
   document.querySelectorAll("#filter-checks input[type=checkbox]").forEach(cb => {
     cb.checked = filterSel[cb.dataset.group].has(cb.value);
+  });
+  document.querySelectorAll(".check-dd").forEach(dd => {
+    const n = filterSel[dd.dataset.group].size;
+    dd.classList.toggle("has-selection", n > 0);
+    dd.querySelector(".check-dd-count").textContent = n ? n : "";
   });
   setupCategoryMenu();
   renderRecipes();

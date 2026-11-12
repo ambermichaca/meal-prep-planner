@@ -12,7 +12,7 @@
        browser that visited in the last 10 min can load fresh HTML alongside a
        stale cached CSS/JS pair — bump this string on every deploy that touches
        css/style.css or js/app.js. -->
-  <link rel="stylesheet" href="css/style.css?v=2026111303" />
+  <link rel="stylesheet" href="css/style.css?v=2026111304" />
 </head>
 <body>
   <header class="app-header">
@@ -34,10 +34,10 @@
         <div class="filter-group" role="search">
           <label for="search" class="sr-only">Search recipes</label>
           <input type="text" id="search" placeholder="Search recipes…" />
+          <div id="filter-checks" class="filter-checks"></div>
         </div>
         <button id="add-recipe-btn">+ Add Recipe</button>
       </div>
-      <div id="filter-checks" class="filter-checks"></div>
       <div id="filter-status" class="filter-status" aria-live="polite"></div>
       <div id="recipe-grid" class="recipe-grid"></div>
       <details class="recipe-sources" id="recipe-sources">
@@ -147,6 +147,6 @@
     </form>
   </dialog>
 
-  <script src="js/app.js?v=2026111303"></script>
+  <script src="js/app.js?v=2026111304"></script>
 </body>
 </html>
