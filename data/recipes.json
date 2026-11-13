@@ -903,7 +903,7 @@
   {
     "id": "banana-pudding",
     "name": "Banana Pudding",
-    "category": "Dessert",
+    "category": "Baking & Desserts",
     "mealSlot": "Dessert",
     "dietDay": "Off-plan",
     "preferred": true,
@@ -930,7 +930,7 @@
   {
     "id": "choc-chip-banana-bread",
     "name": "Chocolate Chip Banana Bread",
-    "category": "Baking/Bread",
+    "category": "Baking & Desserts",
     "mealSlot": "Dessert",
     "dietDay": "Off-plan",
     "preferred": true,
@@ -963,7 +963,7 @@
   {
     "id": "tres-leches",
     "name": "Tres Leches",
-    "category": "Dessert",
+    "category": "Baking & Desserts",
     "mealSlot": "Dessert",
     "dietDay": "Off-plan",
     "preferred": true,
@@ -999,7 +999,7 @@
   {
     "id": "pound-cake-bundt",
     "name": "Pound Cake (Bundt)",
-    "category": "Dessert",
+    "category": "Baking & Desserts",
     "mealSlot": "Dessert",
     "dietDay": "Off-plan",
     "preferred": true,
@@ -1029,7 +1029,7 @@
   {
     "id": "cinnamon-rolls",
     "name": "Cinnamon Rolls",
-    "category": "Baking/Bread",
+    "category": "Baking & Desserts",
     "mealSlot": "Dessert",
     "dietDay": "Off-plan",
     "preferred": true,
@@ -1066,7 +1066,7 @@
   {
     "id": "focaccia",
     "name": "Focaccia",
-    "category": "Baking/Bread",
+    "category": "Baking & Desserts",
     "mealSlot": "Side",
     "dietDay": "Off-plan",
     "preferred": true,
@@ -1165,7 +1165,7 @@
   {
     "id": "apple-cider-donuts",
     "name": "Baked Apple Cider Donuts",
-    "category": "Dessert",
+    "category": "Baking & Desserts",
     "mealSlot": "Dessert",
     "dietDay": "Off-plan",
     "preferred": true,
@@ -1202,7 +1202,7 @@
   {
     "id": "apple-fritter-loaf",
     "name": "Apple Fritter Loaf",
-    "category": "Baking/Bread",
+    "category": "Baking & Desserts",
     "mealSlot": "Dessert",
     "dietDay": "Off-plan",
     "preferred": true,
@@ -1363,7 +1363,7 @@
   {
     "id": "sweet-potato-brownies",
     "name": "Sweet Potato Brownies",
-    "category": "Dessert",
+    "category": "Baking & Desserts",
     "mealSlot": "Dessert",
     "dietDay": "Off-plan",
     "preferred": true,
@@ -1499,7 +1499,7 @@
   {
     "id": "lemon-berry-pound-cake",
     "name": "Lemon Berry Pound Cake",
-    "category": "Dessert",
+    "category": "Baking & Desserts",
     "mealSlot": "Dessert",
     "dietDay": "Off-plan",
     "preferred": true,
@@ -1535,7 +1535,7 @@
   {
     "id": "blackberry-yogurt-pie",
     "name": "Blackberry Yogurt Pie (makes two)",
-    "category": "Dessert",
+    "category": "Baking & Desserts",
     "mealSlot": "Dessert",
     "dietDay": "Off-plan",
     "preferred": true,
@@ -1789,7 +1789,7 @@
   {
     "id": "french-toast-sobadash",
     "name": "French Toast (@sobadash)",
-    "category": "Dessert",
+    "category": "Baking & Desserts",
     "mealSlot": "Breakfast",
     "dietDay": "Off-plan",
     "preferred": true,
@@ -1822,7 +1822,7 @@
   {
     "id": "churro-cheesecake-bites",
     "name": "Churro Cheesecake Bites",
-    "category": "Dessert",
+    "category": "Baking & Desserts",
     "mealSlot": "Dessert",
     "dietDay": "Off-plan",
     "preferred": true,
@@ -1853,7 +1853,7 @@
   {
     "id": "pumpkin-cinnamon-rolls",
     "name": "Pumpkin Cinnamon Rolls",
-    "category": "Baking/Bread",
+    "category": "Baking & Desserts",
     "mealSlot": "Dessert",
     "dietDay": "Off-plan",
     "preferred": true,
@@ -1893,7 +1893,7 @@
   {
     "id": "blueberry-streusel-scones",
     "name": "Blueberry Streusel Scones",
-    "category": "Baking/Bread",
+    "category": "Baking & Desserts",
     "mealSlot": "Breakfast",
     "dietDay": "Off-plan",
     "preferred": true,
@@ -2089,7 +2089,7 @@
   {
     "id": "pumpkin-spice-cake-vegan",
     "name": "Andrea's Pumpkin Spice Cake (Vegan)",
-    "category": "Dessert",
+    "category": "Baking & Desserts",
     "mealSlot": "Dessert",
     "dietDay": "Off-plan",
     "preferred": true,
@@ -2128,7 +2128,7 @@
   {
     "id": "oreo-brownies-notes",
     "name": "Oreo Brownies (bake notes)",
-    "category": "Dessert",
+    "category": "Baking & Desserts",
     "mealSlot": "Dessert",
     "dietDay": "Off-plan",
     "preferred": true,
@@ -3604,7 +3604,7 @@
   {
     "id": "garlic-naan",
     "name": "Garlic Naan",
-    "category": "Baking/Bread",
+    "category": "Baking & Desserts",
     "mealSlot": "Side",
     "dietDay": "Off-plan",
     "preferred": false,
@@ -3717,7 +3717,7 @@
   {
     "id": "broma-choc-chip-cookies",
     "name": "Brown Butter-Style Chocolate Chip Cookies (Broma)",
-    "category": "Dessert",
+    "category": "Baking & Desserts",
     "mealSlot": "Dessert",
     "dietDay": "Off-plan",
     "preferred": false,
@@ -3748,7 +3748,7 @@
   {
     "id": "sourdough-apple-cinnamon-scones",
     "name": "Sourdough Apple Cinnamon Scones",
-    "category": "Baking/Bread",
+    "category": "Baking & Desserts",
     "mealSlot": "Breakfast",
     "dietDay": "Off-plan",
     "preferred": false,
@@ -3786,7 +3786,7 @@
   {
     "id": "lava-cake-for-two",
     "name": "Lava Cake for Two",
-    "category": "Dessert",
+    "category": "Baking & Desserts",
     "mealSlot": "Dessert",
     "dietDay": "Off-plan",
     "preferred": false,
@@ -3816,7 +3816,7 @@
   {
     "id": "chocolate-lava-cakes",
     "name": "Chocolate Lava Cakes (Serves 3)",
-    "category": "Dessert",
+    "category": "Baking & Desserts",
     "mealSlot": "Dessert",
     "dietDay": "Off-plan",
     "preferred": false,
@@ -3846,7 +3846,7 @@
   {
     "id": "strawberry-short-cupcakes",
     "name": "Strawberry Short Cupcakes",
-    "category": "Dessert",
+    "category": "Baking & Desserts",
     "mealSlot": "Dessert",
     "dietDay": "Off-plan",
     "preferred": false,
@@ -3878,7 +3878,7 @@
   {
     "id": "almond-raspberry-cream-cupcakes",
     "name": "Almond Raspberry Cream Cupcakes",
-    "category": "Dessert",
+    "category": "Baking & Desserts",
     "mealSlot": "Dessert",
     "dietDay": "Off-plan",
     "preferred": false,
@@ -3913,7 +3913,7 @@
   {
     "id": "tropical-luau-cupcakes",
     "name": "Tropical Luau Cupcakes",
-    "category": "Dessert",
+    "category": "Baking & Desserts",
     "mealSlot": "Dessert",
     "dietDay": "Off-plan",
     "preferred": false,
@@ -3945,7 +3945,7 @@
   {
     "id": "blueberry-crisp-cupcakes",
     "name": "Blueberry Crisp Cupcakes",
-    "category": "Baking/Bread",
+    "category": "Baking & Desserts",
     "mealSlot": "Breakfast",
     "dietDay": "Off-plan",
     "preferred": false,
@@ -3982,7 +3982,7 @@
   {
     "id": "pina-colada-muffins",
     "name": "Piña Colada Muffins",
-    "category": "Baking/Bread",
+    "category": "Baking & Desserts",
     "mealSlot": "Breakfast",
     "dietDay": "Off-plan",
     "preferred": false,
@@ -4015,7 +4015,7 @@
   {
     "id": "oreo-cinnamon-rolls",
     "name": "Oreo Cinnamon Rolls",
-    "category": "Baking/Bread",
+    "category": "Baking & Desserts",
     "mealSlot": "Dessert",
     "dietDay": "Off-plan",
     "preferred": false,
@@ -4053,7 +4053,7 @@
   {
     "id": "baked-apple-cider-muffins",
     "name": "Baked Apple Cider Muffins (or Donuts)",
-    "category": "Baking/Bread",
+    "category": "Baking & Desserts",
     "mealSlot": "Breakfast",
     "dietDay": "Off-plan",
     "preferred": false,
@@ -4088,7 +4088,7 @@
   {
     "id": "pumpkin-choc-chip-cookies",
     "name": "Pumpkin Chocolate Chip Cookies",
-    "category": "Dessert",
+    "category": "Baking & Desserts",
     "mealSlot": "Dessert",
     "dietDay": "Off-plan",
     "preferred": false,
@@ -4121,7 +4121,7 @@
   {
     "id": "apple-bread-pudding",
     "name": "Apple Bread Pudding",
-    "category": "Dessert",
+    "category": "Baking & Desserts",
     "mealSlot": "Dessert",
     "dietDay": "Off-plan",
     "preferred": false,
@@ -4159,7 +4159,7 @@
   {
     "id": "coconut-pecan-bread-pudding",
     "name": "Toasted Coconut Pecan Bread Pudding",
-    "category": "Dessert",
+    "category": "Baking & Desserts",
     "mealSlot": "Dessert",
     "dietDay": "Off-plan",
     "preferred": false,
@@ -4195,7 +4195,7 @@
   {
     "id": "cinnamon-roll-pound-cake",
     "name": "Cinnamon Roll Pound Cake",
-    "category": "Dessert",
+    "category": "Baking & Desserts",
     "mealSlot": "Dessert",
     "dietDay": "Off-plan",
     "preferred": false,
@@ -4232,7 +4232,7 @@
   {
     "id": "carrot-cake",
     "name": "Carrot Cake with Cream Cheese Icing",
-    "category": "Dessert",
+    "category": "Baking & Desserts",
     "mealSlot": "Dessert",
     "dietDay": "Off-plan",
     "preferred": false,
@@ -4271,7 +4271,7 @@
   {
     "id": "ina-brownie-pudding",
     "name": "Ina Garten's Brownie Pudding",
-    "category": "Dessert",
+    "category": "Baking & Desserts",
     "mealSlot": "Dessert",
     "dietDay": "Off-plan",
     "preferred": false,
@@ -4301,7 +4301,7 @@
   {
     "id": "valentines-oreo-mm-cookies",
     "name": "Valentine's Oreo M&M Cookies",
-    "category": "Dessert",
+    "category": "Baking & Desserts",
     "mealSlot": "Dessert",
     "dietDay": "Off-plan",
     "preferred": false,
@@ -4334,7 +4334,7 @@
   {
     "id": "fudge-brownies-yummylavender",
     "name": "Fudge Brownies",
-    "category": "Dessert",
+    "category": "Baking & Desserts",
     "mealSlot": "Dessert",
     "dietDay": "Off-plan",
     "preferred": false,
@@ -4365,7 +4365,7 @@
   {
     "id": "tiramisu-cozy-kitchen",
     "name": "Tiramisu (A Cozy Kitchen)",
-    "category": "Dessert",
+    "category": "Baking & Desserts",
     "mealSlot": "Dessert",
     "dietDay": "Off-plan",
     "preferred": false,
@@ -4396,7 +4396,7 @@
   {
     "id": "vietnamese-coffee-tiramisu",
     "name": "Vietnamese Coffee Tiramisu (Newt)",
-    "category": "Dessert",
+    "category": "Baking & Desserts",
     "mealSlot": "Dessert",
     "dietDay": "Off-plan",
     "preferred": false,
@@ -4427,7 +4427,7 @@
   {
     "id": "spiced-chai-cake",
     "name": "Spiced Chai Cake with Coffee Cream Cheese Frosting",
-    "category": "Dessert",
+    "category": "Baking & Desserts",
     "mealSlot": "Dessert",
     "dietDay": "Off-plan",
     "preferred": false,
@@ -4474,7 +4474,7 @@
   {
     "id": "lemon-blueberry-scones",
     "name": "Fresh Lemon-Blueberry Scones",
-    "category": "Baking/Bread",
+    "category": "Baking & Desserts",
     "mealSlot": "Breakfast",
     "dietDay": "Off-plan",
     "preferred": false,
@@ -4507,7 +4507,7 @@
   {
     "id": "butter-cookies",
     "name": "Butter Cookies",
-    "category": "Dessert",
+    "category": "Baking & Desserts",
     "mealSlot": "Dessert",
     "dietDay": "Off-plan",
     "preferred": false,
@@ -4622,7 +4622,7 @@
   {
     "id": "orange-breakfast-scones",
     "name": "Orange Breakfast Scones",
-    "category": "Baking/Bread",
+    "category": "Baking & Desserts",
     "mealSlot": "Breakfast",
     "dietDay": "Off-plan",
     "preferred": false,
@@ -4657,7 +4657,7 @@
   {
     "id": "choc-chip-zucchini-bread",
     "name": "Chocolate Chip Zucchini Bread",
-    "category": "Baking/Bread",
+    "category": "Baking & Desserts",
     "mealSlot": "Dessert",
     "dietDay": "Off-plan",
     "preferred": false,
@@ -4692,7 +4692,7 @@
   {
     "id": "mixed-berry-tart",
     "name": "Mixed Berry Tart (Galette)",
-    "category": "Dessert",
+    "category": "Baking & Desserts",
     "mealSlot": "Dessert",
     "dietDay": "Off-plan",
     "preferred": false,
