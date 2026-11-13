@@ -1987,7 +1987,7 @@
   {
     "id": "fitness-chili",
     "name": "High-Protein Chili",
-    "category": "Comfort/Dinner",
+    "category": "Healthy/High-Protein",
     "mealSlot": "Dinner",
     "dietDay": "Off-plan",
     "preferred": true,
@@ -2343,7 +2343,7 @@
   {
     "id": "smoky-chicken-skewers-corn-salad",
     "name": "Smoky Chicken Skewers with Corn Salad",
-    "category": "Comfort/Dinner",
+    "category": "Healthy/High-Protein",
     "mealSlot": "Dinner",
     "dietDay": "Off-plan",
     "preferred": false,
@@ -3429,7 +3429,7 @@
   {
     "id": "crispy-baked-wings",
     "name": "Crispy Baked Chicken Wings",
-    "category": "Comfort/Dinner",
+    "category": "Healthy/High-Protein",
     "mealSlot": "Snack",
     "dietDay": "Off-plan",
     "preferred": false,
