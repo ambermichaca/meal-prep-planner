@@ -242,6 +242,28 @@ function macroLineText(r) {
     : "Macros not yet calculated";
 }
 
+// ---------------- "ADD TO GROCERY LIST" BUTTONS ----------------
+// Cards and the full recipe view toggle a recipe in This Week's Recipes (the `extras` list),
+// which is what feeds the Grocery List.
+function weekButtonHTML(id) {
+  const on = extras.includes(id);
+  return `<button type="button" class="week-btn${on ? " in-week" : ""}" data-week-id="${esc(id)}" aria-pressed="${on}">${on ? "✓ On grocery list" : "+ Grocery list"}</button>`;
+}
+
+function toggleWeek(id) {
+  if (extras.includes(id)) extras = extras.filter(x => x !== id);
+  else extras.push(id);
+  saveJSON("mealprep.extras", extras);
+  renderExtras();
+  renderGrocery();
+}
+
+function refreshWeekButtons() {
+  document.querySelectorAll(".week-btn").forEach(btn => {
+    btn.outerHTML = weekButtonHTML(btn.dataset.weekId);
+  });
+}
+
 function recipeCardHTML(r) {
   return `
     <div class="recipe-card" data-id="${esc(r.id)}">
@@ -253,7 +275,10 @@ function recipeCardHTML(r) {
         ${!r.preferred ? '<span class="sep">·</span><span class="badge backlog">Backlog</span>' : ""}
       </div>
       <div class="macro-line">${macroLineText(r)}</div>
-      <button type="button" class="view-recipe-btn" data-id="${esc(r.id)}">View recipe</button>
+      <div class="card-actions">
+        <button type="button" class="view-recipe-btn" data-id="${esc(r.id)}">View recipe</button>
+        ${weekButtonHTML(r.id)}
+      </div>
       ${r.credit ? `<div class="recipe-credit">Original recipe: ${esc(r.credit)}</div>` : ""}
     </div>`;
 }
@@ -286,7 +311,10 @@ function recipeViewHTML(r) {
         </div>
         <h2 id="rv-title">${esc(r.name)}</h2>
       </div>
-      <button type="button" class="rv-close" aria-label="Close recipe">&times;</button>
+      <div class="rv-head-actions">
+        ${weekButtonHTML(r.id)}
+        <button type="button" class="rv-close" aria-label="Close recipe">&times;</button>
+      </div>
     </div>
     <div class="rv-macros">${tiles}</div>
     ${m ? `<p class="rv-per">Per serving</p>` : ""}
@@ -320,11 +348,17 @@ function setupRecipeView() {
   const dialog = document.getElementById("recipe-view-dialog");
   // One delegated listener: the grid is re-rendered on every filter change.
   document.getElementById("recipe-grid").addEventListener("click", e => {
+    const weekBtn = e.target.closest(".week-btn");
+    if (weekBtn) { toggleWeek(weekBtn.dataset.weekId); return; } // don't also open the recipe
     const card = e.target.closest(".recipe-card");
     if (card) openRecipeView(card.dataset.id);
   });
   // Clicking the dimmed backdrop (the dialog element itself, outside its content) closes it.
-  dialog.addEventListener("click", e => { if (e.target === dialog) dialog.close(); });
+  dialog.addEventListener("click", e => {
+    const weekBtn = e.target.closest(".week-btn");
+    if (weekBtn) { toggleWeek(weekBtn.dataset.weekId); return; }
+    if (e.target === dialog) dialog.close();
+  });
 }
 
 function tooltipHTML(r) {
@@ -433,9 +467,10 @@ function setupExtras() {
 }
 
 function renderExtras() {
+  refreshWeekButtons(); // keep card / recipe-view buttons in sync with the list
   const list = document.getElementById("extras-list");
   if (!extras.length) {
-    list.innerHTML = `<li class="extras-empty" style="list-style:none;border:none;box-shadow:none;padding:0;">Nothing added yet.</li>`;
+    list.innerHTML = `<li class="extras-empty" style="list-style:none;border:none;box-shadow:none;padding:0;">Nothing added yet. Tap "+ Grocery list" on any recipe card, or pick one here.</li>`;
     return;
   }
   list.innerHTML = extras.map((id, i) => {

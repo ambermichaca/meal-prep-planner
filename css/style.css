@@ -765,3 +765,23 @@ body:has(#recipe-view-dialog[open]) { overflow: hidden; }
   vertical-align: middle;
   margin-left: 8px;
 }
+
+/* ---------- "+ Grocery list" toggle on cards / recipe view ---------- */
+.card-actions { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.week-btn {
+  padding: 7px 12px;
+  border: 1px solid var(--ink);
+  background: transparent;
+  color: var(--ink);
+  font-size: 0.66rem;
+  letter-spacing: 0.1em;
+  white-space: nowrap;
+}
+.week-btn:hover { background: var(--ink); color: var(--ink-contrast); }
+.week-btn.in-week { background: var(--ink); color: var(--ink-contrast); }
+.week-btn.in-week:hover { background: transparent; color: var(--ink); }
+.rv-head-actions { display: flex; align-items: center; gap: 10px; flex-shrink: 0; }
+@media (max-width: 600px) {
+  .rv-head { flex-wrap: wrap; }
+  .rv-head-actions { order: -1; width: 100%; justify-content: space-between; }
+}
