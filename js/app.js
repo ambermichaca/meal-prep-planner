@@ -71,16 +71,17 @@ async function init() {
   }
 }
 
-// ---------------- MODE SWITCH (Recipes vs Weekly Planner, one nav bar) ----------------
+// ---------------- MODE SWITCH (Recipes / Weekly Planner / Grocery List, one nav bar) ----------------
 function setupModeSwitch() {
   document.getElementById("planner-btn").addEventListener("click", () => switchMode("planner"));
+  document.getElementById("grocery-btn").addEventListener("click", () => switchMode("grocery"));
   // recipes-btn is wired in setupCategoryMenuTriggers (it also owns the category dropdown)
 }
 
 function switchMode(name) {
   document.querySelectorAll(".tab-btn").forEach(b => b.classList.remove("active"));
   document.querySelectorAll(".mode-panel").forEach(p => p.classList.remove("active"));
-  document.getElementById(name === "planner" ? "planner-btn" : "recipes-btn").classList.add("active");
+  document.getElementById(name + "-btn").classList.add("active"); // recipes-btn / planner-btn / grocery-btn
   document.getElementById("mode-" + name).classList.add("active");
 }
 
@@ -559,7 +560,7 @@ function renderGrocery() {
   extras.forEach(id => {
     const r = RECIPES.find(x => x.id === id);
     if (!r) return;
-    const source = `${r.name} (Extra)`;
+    const source = `${r.name} (this week)`;
     r.ingredients.forEach(rawLine => {
       const parsed = parseIngredientLine(rawLine);
       if (!groups[parsed.item]) groups[parsed.item] = { displayName: parsed.item, entries: [], noQty: [] };

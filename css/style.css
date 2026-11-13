@@ -752,3 +752,16 @@ body:has(#recipe-view-dialog[open]) { overflow: hidden; }
   .sources-table tr { padding: 10px 0; border-bottom: 1px solid var(--border); }
   .sources-table th, .sources-table td { border: none; padding: 2px 0; }
 }
+
+.section-heading-first { margin-top: 28px; }
+.optional-tag {
+  font-family: var(--sans);
+  font-style: normal;
+  font-weight: 400;
+  font-size: 0.66rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  vertical-align: middle;
+  margin-left: 8px;
+}

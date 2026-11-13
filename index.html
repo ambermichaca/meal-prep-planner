@@ -12,7 +12,7 @@
        browser that visited in the last 10 min can load fresh HTML alongside a
        stale cached CSS/JS pair — bump this string on every deploy that touches
        css/style.css or js/app.js. -->
-  <link rel="stylesheet" href="css/style.css?v=2026111304" />
+  <link rel="stylesheet" href="css/style.css?v=2026111305" />
 </head>
 <body>
   <header class="app-header">
@@ -24,6 +24,7 @@
         <div class="dropdown-menu" id="category-menu" role="menu" aria-label="Filter by category"></div>
       </div>
       <button class="tab-btn" data-mode="planner" id="planner-btn">Weekly Planner</button>
+      <button class="tab-btn" data-mode="grocery" id="grocery-btn">Grocery List</button>
     </nav>
   </header>
 
@@ -78,26 +79,30 @@
       </details>
     </section>
 
-    <!-- WEEKLY PLANNER: day grid (Meal Prep recipes only) + extra selections (any recipe) + grocery list, combined -->
+    <!-- WEEKLY PLANNER: this week's recipe picks (any recipe) on top, then the optional day-by-day meal-prep grid -->
     <section id="mode-planner" class="mode-panel">
-      <div class="planner-toolbar">
-        <button id="clear-week-btn">Clear week</button>
-        <span class="hint">Only recipes tagged "Meal Prep" show up here. Selections save automatically. Hover the ⓘ on a picked meal for its full breakdown.</span>
-      </div>
-      <div id="planner-grid" class="planner-grid"></div>
-      <div id="week-totals" class="totals-box"></div>
-
-      <h2 class="section-heading">Extra Selections</h2>
-      <p class="hint">Anything outside the meal-prep rotation — any recipe, any category, add as many as you like. Included in the grocery list below; not counted in the macro totals above, since these aren't part of the tracked plan.</p>
+      <h2 class="section-heading section-heading-first">This Week's Recipes</h2>
+      <p class="hint">Anything you plan to cook this week — any recipe, any category, add as many as you like. Everything here goes on the Grocery List.</p>
       <div class="extras-add-row">
-        <label for="extras-select" class="sr-only">Add a recipe to extra selections</label>
+        <label for="extras-select" class="sr-only">Add a recipe to this week's recipes</label>
         <select id="extras-select"></select>
         <button id="extras-add-btn">+ Add</button>
       </div>
       <ul id="extras-list" class="extras-list"></ul>
 
-      <h2 class="section-heading">Grocery List</h2>
-      <p class="hint">Combines quantities for the same ingredient across every meal picked above (including Extra Selections). Check items off as you shop.</p>
+      <h2 class="section-heading">Day-by-Day Meal Prep <span class="optional-tag">optional</span></h2>
+      <div class="planner-toolbar">
+        <button id="clear-week-btn">Clear week</button>
+        <span class="hint">For tracked meal-prep days. Only recipes tagged "Meal Prep" show up here, and the macro totals below count only these picks. Hover the ⓘ on a picked meal for its full breakdown.</span>
+      </div>
+      <div id="planner-grid" class="planner-grid"></div>
+      <div id="week-totals" class="totals-box"></div>
+    </section>
+
+    <!-- GROCERY LIST: built from This Week's Recipes + the day-by-day grid -->
+    <section id="mode-grocery" class="mode-panel">
+      <h2 class="section-heading section-heading-first">Grocery List</h2>
+      <p class="hint">Combines quantities for the same ingredient across This Week's Recipes and any day-by-day meal-prep picks. Check items off as you shop.</p>
       <ul id="grocery-list" class="grocery-list"></ul>
     </section>
   </main>
@@ -147,6 +152,6 @@
     </form>
   </dialog>
 
-  <script src="js/app.js?v=2026111304"></script>
+  <script src="js/app.js?v=2026111305"></script>
 </body>
 </html>
