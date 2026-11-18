@@ -4746,5 +4746,37 @@
     },
     "source": "User created",
     "notes": "Marinara's fat/carb/fiber are estimated from the label's calorie count only (40 kcal/half cup) \u2014 update if you check the full nutrition label."
+  },
+  {
+    "id": "parmesan-roasted-cauliflower",
+    "name": "Garlic-Parmesan Roasted Cauliflower",
+    "category": "Meal Prep",
+    "mealSlot": "Dinner",
+    "dietDay": "Low Carb",
+    "preferred": true,
+    "servings": 7,
+    "ingredients": [
+      "1 medium head cauliflower, cut into florets (about 6 to 8 cups)",
+      "Olive oil cooking spray (swapped in for the original 3 Tbsp olive oil)",
+      "1 1/2 tsp paprika",
+      "3/4 tsp kosher salt",
+      "1/2 tsp cracked black pepper",
+      "3 garlic cloves, minced",
+      "2 to 3 Tbsp grated Parmesan cheese (for the whole batch)",
+      "Juice of 1/2 lemon",
+      "2 Tbsp finely chopped fresh parsley",
+      "+1 Tbsp grated Parmesan, sprinkled on individually per serving"
+    ],
+    "instructions": "Preheat oven to 450\u00b0F with a large rimmed baking sheet on the center rack. Toss cauliflower florets with olive oil spray, paprika, salt, and pepper. Spread in a single layer on the hot sheet (it should sizzle) and roast 20-25 min, tossing once halfway, until lightly charred and tender. Sprinkle with minced garlic and the 2-3 Tbsp Parmesan, return to the oven for 5 more min. Drizzle with lemon juice, transfer to a serving bowl, and garnish with parsley. Sprinkle an additional 1 Tbsp Parmesan on top of your individual serving before eating.",
+    "macros": {
+      "protein_g": 4.6,
+      "fat_g": 2.0,
+      "carb_g": 6.1,
+      "fiber_g": 2.1,
+      "calories": 57.2
+    },
+    "source": "User-provided recipe URL (dishingouthealth.com)",
+    "credit": "Jamie Vespa, Dishing Out Health",
+    "notes": "Swapped the original's 3 Tbsp olive oil for a light oil spray to cut fat/calories. The batch's 2-3 Tbsp Parmesan is spread across ~7 one-cup servings (~0.36 Tbsp/serving) \u2014 add the extra 1 Tbsp Parmesan directly onto your own plated serving if you want a meaningful fat boost per portion, per the decision made when setting this up. Macros above = 1 cup of the batch + that personal extra Tbsp."
   }
 ]
