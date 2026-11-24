@@ -865,3 +865,7 @@ body.hl-dragging .day-card.drop-over { outline: 2px solid var(--ink); background
 }
 .grocery-group-count { margin-left: auto; }
 .grocery-group-cart .grocery-group-heading { color: var(--text-muted); font-style: italic; }
+
+/* Per-recipe breakdown under each grocery total */
+.grocery-list .item-breakdown .bd-row { display: block; }
+.grocery-list .item-breakdown .bd-amt { font-style: normal; color: var(--text); }

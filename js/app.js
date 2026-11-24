@@ -624,13 +624,24 @@ function renderExtras() {
 // (e.g. "4 oz chicken breast" -> qty 4, unit oz, item "chicken breast"). Lines that
 // don't start with a recognizable quantity (side-dish references, "to taste", etc.)
 // still get listed on the grocery list, just without a summed amount.
-const VOLUME_TO_TBSP = { tsp: 1 / 3, tbsp: 1, cup: 16 };
-const UNIT_LABEL = {
-  oz: n => "oz", cup: n => n === 1 ? "cup" : "cups", tbsp: n => "tbsp", tsp: n => "tsp",
-  slice: n => n === 1 ? "slice" : "slices", scoop: n => n === 1 ? "scoop" : "scoops",
-  serving: n => n === 1 ? "serving" : "servings", clove: n => n === 1 ? "clove" : "cloves",
-  packet: n => n === 1 ? "packet" : "packets"
-};
+// Units are never converted: amounts are only added together when they share the
+// exact unit the recipes used (cups with cups, tbsp with tbsp), so the grocery list
+// reads in the same measurements as the recipes.
+const UNIT_PATTERNS = [
+  ["oz", /^(oz|ounces?)$/], ["lb", /^(lbs?|pounds?)$/], ["g", /^(g|grams?)$/], ["kg", /^(kg|kilograms?)$/],
+  ["ml", /^(ml|milliliters?|millilitres?)$/], ["cup", /^cups?$/], ["tbsp", /^(tbsps?|tbs|tablespoons?)$/],
+  ["tsp", /^(tsps?|teaspoons?)$/], ["slice", /^slices?$/], ["scoop", /^scoops?$/], ["serving", /^servings?$/],
+  ["clove", /^cloves?$/], ["packet", /^packets?$/], ["stick", /^sticks?$/], ["can", /^cans?$/], ["jar", /^jars?$/],
+  ["pint", /^pints?$/], ["quart", /^quarts?$/], ["package", /^(packages?|pkgs?)$/], ["bag", /^bags?$/],
+  ["box", /^box(es)?$/], ["head", /^heads?$/], ["bunch", /^bunch(es)?$/], ["sprig", /^sprigs?$/],
+  ["sheet", /^sheets?$/], ["block", /^blocks?$/], ["container", /^containers?$/], ["ear", /^ears?$/],
+  ["piece", /^pieces?$/]
+];
+const UNIT_PLURAL = { cup: "cups", slice: "slices", scoop: "scoops", serving: "servings", clove: "cloves",
+  packet: "packets", stick: "sticks", can: "cans", jar: "jars", pint: "pints", quart: "quarts",
+  package: "packages", bag: "bags", box: "boxes", head: "heads", bunch: "bunches", sprig: "sprigs",
+  sheet: "sheets", block: "blocks", container: "containers", ear: "ears", piece: "pieces" };
+function unitLabel(u, n) { return n > 1 && UNIT_PLURAL[u] ? UNIT_PLURAL[u] : u; }
 
 function parseQtyToken(tok) {
   tok = tok.trim();
@@ -644,16 +655,17 @@ function parseQtyToken(tok) {
 
 function canonicalUnit(u) {
   u = u.toLowerCase().replace(/\.$/, "");
-  if (/^oz|ounce/.test(u)) return "oz";
-  if (/^cup/.test(u)) return "cup";
-  if (/^tbsp|tablespoon/.test(u)) return "tbsp";
-  if (/^tsp|teaspoon/.test(u)) return "tsp";
-  if (/^slice/.test(u)) return "slice";
-  if (/^scoop/.test(u)) return "scoop";
-  if (/^serving/.test(u)) return "serving";
-  if (/^clove/.test(u)) return "clove";
-  if (/^packet/.test(u)) return "packet";
-  return null; // "whole" and unrecognized units fall back to unitless counting
+  const hit = UNIT_PATTERNS.find(([, re]) => re.test(u));
+  return hit ? hit[0] : null; // "whole" and unrecognized units fall back to unitless counting
+}
+
+// The ingredient is the part before the first comma ("carrots, peeled"), unless that
+// part is only prep words ("melted, cooled butter") — then keep reading past the commas.
+function itemName(text) {
+  const parts = text.toLowerCase().split(",").map(p => p.trim());
+  let i = 0;
+  while (i < parts.length - 1 && !parts[i].replace(PREP_WORDS, "").trim()) i++;
+  return parts[i];
 }
 
 function parseIngredientLine(rawText) {
@@ -662,38 +674,92 @@ function parseIngredientLine(rawText) {
   const qtyRegex = new RegExp(`^(${numTok})(\\s*-\\s*(${numTok}))?\\s*`);
   const m = text.match(qtyRegex);
   if (!m) {
-    const item = (text || rawText).split(",")[0].trim().toLowerCase();
+    const item = itemName(text || rawText);
     return { qty: null, unit: null, item: item || rawText.toLowerCase(), display: rawText };
   }
   let qty = parseQtyToken(m[1]);
   if (m[3]) {
     const hi = parseQtyToken(m[3]);
-    if (hi != null) qty = (qty + hi) / 2;
+    if (hi != null) qty = hi; // "3-4 cups": shop for the high end
   }
   const rest = text.slice(m[0].length);
-  const unitRegex = /^([a-z]+)\.?\s*/i;
-  const um = rest.match(unitRegex);
+  // Allows a size word before the unit: "2 small cans crushed pineapple".
+  const um = rest.match(/^(?:(?:large|medium|small)\s+)?([a-z]+)\.?\s+/i);
   let unit = null, itemPart = rest;
   if (um) {
     const c = canonicalUnit(um[1]);
-    if (c) { unit = c; itemPart = rest.slice(um[0].length); }
+    if (c) { unit = c; itemPart = rest.slice(um[0].length).replace(/^of\s+/i, ""); }
   }
-  const item = (itemPart || rest).split(",")[0].trim().toLowerCase() || rawText.toLowerCase();
-  return { qty, unit, item, display: rawText };
+  return { qty, unit, item: itemName(itemPart || rest) || rawText.toLowerCase(), display: rawText };
 }
 
+// ---- Folding similar ingredients into one grocery line ----
+// "grated carrots", "diced carrots" and "2 large carrots" are all just carrots;
+// "flour", "AP flour" and "all purpose flour" are all all-purpose flour. Prep, size
+// and temperature words are dropped and plurals made singular to build a shared key.
+// Words that change what you actually buy (unsalted, dark brown, bread flour,
+// smoked, kosher…) are kept, so those stay separate lines.
+const PREP_WORDS = /\b(grated|diced|chopped|cubed|minced|sliced|shredded|julienned|finely|roughly|coarsely|thinly|freshly|fresh|peeled|trimmed|halved|quartered|extra-large|large|medium|small|ripe|packed|loosely|lightly|heaped|heaping|cold|chilled|melted|cooled|softened|room temp(erature)?|warm|lukewarm|cooked|raw|to taste|optional:?)\b/g;
+const ITEM_SYNONYMS = {
+  "flour": "all-purpose flour", "all purpose flour": "all-purpose flour", "ap flour": "all-purpose flour",
+  "confectioners' sugar": "powdered sugar", "icing sugar": "powdered sugar",
+  "granulated sugar": "sugar", "white sugar": "sugar",
+  "scallion": "green onion", "spring onion": "green onion",
+  "evoo": "extra-virgin olive oil", "bread crumb": "breadcrumb", "panko bread crumb": "panko",
+  "bicarbonate of soda": "baking soda", "heavy whipping cream": "heavy cream", "whipping cream": "heavy cream",
+  "mayo": "mayonnaise", "chicken stock": "chicken broth", "whole egg": "egg", "egg white": "egg white",
+  "garlic clove": "garlic", "clove garlic": "garlic", "cilantro leave": "cilantro"
+};
+// Plain "flour" means all-purpose; any named flour type stays its own line.
+const OTHER_FLOURS = /bread|cake|pastry|almond|coconut|self|rice|oat|wheat|tortilla|corn|chickpea|\b00\b|seasoned/;
+
+function singularWord(w) {
+  if (/(ss|us|is)$/.test(w)) return w;
+  if (/ies$/.test(w)) return w.slice(0, -3) + "y";
+  if (/(tomato|potato)es$/.test(w)) return w.slice(0, -2);
+  if (/(ch|sh|x)es$/.test(w)) return w.slice(0, -2);
+  if (/s$/.test(w)) return w.slice(0, -1);
+  return w;
+}
+
+// Returns { key, name, unit } — key groups lines together, name is what the list shows.
+function canonicalIngredient(parsed) {
+  const raw = parsed.item;
+  let unit = parsed.unit;
+  // Canned goods stay their own line ("canned diced tomatoes" ≠ fresh tomatoes).
+  if (unit === "can") {
+    const words = raw.replace(/\s+/g, " ").trim().split(" ");
+    words[words.length - 1] = singularWord(words[words.length - 1]);
+    return { key: "canned " + words.join(" "), name: "Canned " + raw.replace(/\s+/g, " ").trim(), unit };
+  }
+  let name = raw.replace(PREP_WORDS, " ")
+    .replace(/^\s*(?:tiny\s+)?(?:pinch|dash|sprinkle|splash|drizzle)(?:\s+of)?\s+/, "")
+    // "ground cinnamon" = cinnamon, but ground ginger/mustard/coriander are different from fresh/prepared.
+    .replace(/\bground\s+(?=(cinnamon|cumin|cardamom|nutmeg|turmeric|allspice|paprika)\b)/, "")
+    .replace(/\s+/g, " ").trim();
+  if (!name) name = raw.trim();
+  // Fresh woody herbs aren't interchangeable with the dried jar, so keep "fresh" on those.
+  if (/\bfresh\b/.test(raw) && /^(thyme|oregano|rosemary|sage)$/.test(name)) name = "fresh " + name;
+  // Fresh/chopped coriander is cilantro (the leaves), not the coriander spice.
+  if (/\b(fresh|chopped)\b/.test(raw) && name === "coriander") name = "cilantro";
+  const words = name.split(" ");
+  words[words.length - 1] = singularWord(words[words.length - 1]);
+  let key = words.join(" ");
+  if (/^(garlic cloves?|cloves? (of )?garlic)$/.test(name) && !unit) unit = "clove";
+  if (/\bflour\b/.test(key) && !OTHER_FLOURS.test(key) && !/[+&/]| or /.test(key)) key = "all-purpose flour";
+  if (ITEM_SYNONYMS[key]) key = ITEM_SYNONYMS[key];
+  if (key !== words.join(" ")) name = key; // renamed by a rule: show the canonical name
+  return { key, name: name.charAt(0).toUpperCase() + name.slice(1), unit };
+}
+
+// 0.5 -> "½", 4.5 -> "4½", 1.25 -> "1¼"; anything that isn't a common fraction stays decimal.
 function formatQty(n) {
-  const r = Math.round(n * 100) / 100;
-  return String(r);
-}
-
-function formatVolumeTbsp(totalTbsp) {
-  const cups = Math.floor(totalTbsp / 16 + 1e-9);
-  const remTbsp = totalTbsp - cups * 16;
-  const parts = [];
-  if (cups > 0) parts.push(`${formatQty(cups)} ${UNIT_LABEL.cup(cups)}`);
-  if (remTbsp > 0.01) parts.push(`${formatQty(remTbsp)} tbsp`);
-  return parts.join(" ");
+  const whole = Math.floor(n + 1e-9);
+  const frac = n - whole;
+  if (frac < 0.01) return String(whole);
+  const FR = [[1 / 8, "⅛"], [1 / 6, "⅙"], [1 / 4, "¼"], [1 / 3, "⅓"], [3 / 8, "⅜"], [1 / 2, "½"], [5 / 8, "⅝"], [2 / 3, "⅔"], [3 / 4, "¾"], [5 / 6, "⅚"], [7 / 8, "⅞"]];
+  const f = FR.find(([v]) => Math.abs(v - frac) < 0.01);
+  return f ? (whole ? whole : "") + f[1] : String(Math.round(n * 100) / 100);
 }
 
 // ---------------- STORE SECTIONS (for the "Store section" grocery sort) ----------------
@@ -705,7 +771,7 @@ const STORE_SECTIONS = ["Produce", "Bakery & Bread", "Meat & Seafood", "Dairy & 
 const SECTION_RULES = [
   ["Frozen", /\bfrozen\b|ice cream|\bfries\b/],
   ["Baking", /pudding mix|cake mix/],
-  ["Pantry", /\bcans?\b|\bjar\b|\bbox(es)?\b|in adobo|sauce|broth|stock|bouillon|knorr|vinegar|soy\b|hoisin|mirin|sriracha|sambal|salsa|marinara|(tomato|miso|curry|chili|pepper|garlic|ginger) paste|peanut butter|almond butter|coconut (milk|cream)|almond milk|dairy-free milk|condensed milk|evaporated milk|noodles?|pasta|spaghetti|bucatini|fusilli|macaroni|lasagna|ramen|udon|bread ?crumbs|panko|protein|whey|\boil\b|evoo|spray|mayo|tea bag|tortilla chips/],
+  ["Pantry", /\bcans?\b|\bcanned\b|\bjar\b|\bbox(es)?\b|in adobo|sauce|broth|stock|bouillon|knorr|vinegar|soy\b|hoisin|mirin|sriracha|sambal|salsa|marinara|(tomato|miso|curry|chili|pepper|garlic|ginger) paste|peanut butter|almond butter|coconut (milk|cream)|almond milk|dairy-free milk|condensed milk|evaporated milk|noodles?|pasta|spaghetti|bucatini|fusilli|macaroni|lasagna|ramen|udon|bread ?crumbs|panko|protein|whey|\boil\b|evoo|spray|mayo|tea bag|tortilla chips/],
   ["Wine & Spirits", /\bwine\b|vodka|\brum\b|bourbon|liqueur|\bsake\b|framboise/],
   ["Spices & Seasonings", /\bdried\b|sazón|granulated garlic/],
   ["Produce", /\bfresh\b|cilantro|parsley|\bmint\b|\bdill\b|culantro|epazote|basil|coriander leaves|chopped coriander|\bsprigs?\b|lettuce/],
@@ -775,8 +841,14 @@ function renderGroceryMeals() {
 
 function renderGrocery() {
   renderGroceryMeals();
-  const groups = {}; // normalized item -> { displayName, entries:[{qty,unit,source}], noQty:[{source}] }
+  const groups = {}; // canonical ingredient key -> { name, entries: [{ qty, unit, source, display }] }
   const mealOrder = new Set(); // every meal source, in planner order (days first, then this week's recipes)
+  const addLine = (rawLine, source) => {
+    const parsed = parseIngredientLine(rawLine);
+    const c = canonicalIngredient(parsed);
+    if (!groups[c.key]) groups[c.key] = { name: c.name, entries: [] };
+    groups[c.key].entries.push({ qty: parsed.qty, unit: c.unit, source, display: rawLine });
+  };
 
   DAYS.forEach(day => {
     const selections = plan[day] || {};
@@ -786,15 +858,7 @@ function renderGrocery() {
       if (!r) return;
       const source = `${r.name} (${day.slice(0, 3)} ${slot})`;
       mealOrder.add(source);
-      r.ingredients.forEach(rawLine => {
-        const parsed = parseIngredientLine(rawLine);
-        if (!groups[parsed.item]) groups[parsed.item] = { displayName: parsed.item, entries: [], noQty: [] };
-        if (parsed.qty != null) {
-          groups[parsed.item].entries.push({ qty: parsed.qty, unit: parsed.unit, source });
-        } else {
-          groups[parsed.item].noQty.push({ source, display: rawLine });
-        }
-      });
+      r.ingredients.forEach(rawLine => addLine(rawLine, source));
     });
   });
 
@@ -803,18 +867,10 @@ function renderGrocery() {
     if (!r) return;
     const source = `${r.name} (this week)`;
     mealOrder.add(source);
-    r.ingredients.forEach(rawLine => {
-      const parsed = parseIngredientLine(rawLine);
-      if (!groups[parsed.item]) groups[parsed.item] = { displayName: parsed.item, entries: [], noQty: [] };
-      if (parsed.qty != null) {
-        groups[parsed.item].entries.push({ qty: parsed.qty, unit: parsed.unit, source });
-      } else {
-        groups[parsed.item].noQty.push({ source, display: rawLine });
-      }
-    });
+    r.ingredients.forEach(rawLine => addLine(rawLine, source));
   });
 
-  const keys = Object.keys(groups).sort();
+  const keys = Object.keys(groups).sort((a, b) => groups[a].name.localeCompare(groups[b].name));
   const list = document.getElementById("grocery-list");
   if (!keys.length) {
     list.innerHTML = "<p>Nothing planned yet — pick some meals above and this list fills in automatically.</p>";
@@ -823,32 +879,21 @@ function renderGrocery() {
 
   const items = keys.map(key => {
     const g = groups[key];
-    let volumeTotal = 0;
-    const otherBuckets = {}; // unit (or "×" for unitless count) -> total
+    // Total per unit exactly as the recipes wrote it — no cup/tbsp conversion.
+    const totals = new Map(); // unit ("" = plain count) -> sum
     g.entries.forEach(e => {
-      if (e.unit && VOLUME_TO_TBSP[e.unit] != null) {
-        volumeTotal += e.qty * VOLUME_TO_TBSP[e.unit];
-      } else if (e.unit) {
-        otherBuckets[e.unit] = (otherBuckets[e.unit] || 0) + e.qty;
-      } else {
-        otherBuckets["×"] = (otherBuckets["×"] || 0) + e.qty;
-      }
+      if (e.qty == null) return;
+      const u = e.unit || "";
+      totals.set(u, (totals.get(u) || 0) + e.qty);
     });
+    const qtyLabel = [...totals].map(([u, n]) => u ? `${formatQty(n)} ${unitLabel(u, n)}` : formatQty(n)).join(" + ");
 
-    const qtyParts = [];
-    if (volumeTotal > 0.01) qtyParts.push(formatVolumeTbsp(volumeTotal));
-    Object.entries(otherBuckets).forEach(([u, total]) => {
-      qtyParts.push(u === "×" ? formatQty(total) : `${formatQty(total)} ${UNIT_LABEL[u] ? UNIT_LABEL[u](total) : u}`);
-    });
-    const qtyLabel = qtyParts.join(" + ");
-
-    const allSources = [...g.entries.map(e => e.source), ...g.noQty.map(e => e.source)];
+    const allSources = g.entries.map(e => e.source);
     const meals = [...new Set(allSources)];
-    const unspecifiedNote = g.noQty.length
-      ? `<br>Also needed (amount not specified): ${g.noQty.map(e => esc(e.display)).join("; ")}`
-      : "";
-
-    const displayName = key.charAt(0).toUpperCase() + key.slice(1);
+    // Each recipe's own line, word for word, under the total.
+    const breakdown = g.entries.map(e =>
+      `<span class="bd-row"><span class="bd-amt">${esc(e.display)}</span> <span class="bd-src">· ${esc(e.source)}</span></span>`).join("");
+    const displayName = g.name;
     const keyHash = "gk-" + btoa(unescape(encodeURIComponent(key))).replace(/[^a-zA-Z0-9]/g, "");
     const checked = !!groceryChecked[keyHash];
 
@@ -857,11 +902,11 @@ function renderGrocery() {
         <input type="checkbox" ${checked ? "checked" : ""} />
         <span>
           <span class="item-name">${esc(displayName)}${qtyLabel ? ` <span class="item-qty">— ${esc(qtyLabel)}</span>` : ""}</span>
-          <span class="item-sources">Used in: ${allSources.map(esc).join(", ")}${unspecifiedNote}</span>
+          <span class="item-sources item-breakdown">${breakdown}</span>
         </span>
       </label>
     </li>`;
-    return { keyHash, checked, html, meals, section: storeSection(key) };
+    return { keyHash, checked, html, meals, section: storeSection(g.name.toLowerCase()) };
   });
 
   // Unchecked items are grouped by store section or by meal; everything already
