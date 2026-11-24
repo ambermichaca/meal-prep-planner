@@ -60,6 +60,11 @@ async function init() {
         plan = {}; saveJSON("mealprep.plan", plan); renderPlanner(); renderGrocery();
       }
     });
+    document.getElementById("reset-checked-btn").addEventListener("click", () => {
+      groceryChecked = {};
+      saveJSON("mealprep.groceryChecked", groceryChecked);
+      renderGrocery();
+    });
   } catch (e) {
     document.body.insertAdjacentHTML("afterbegin",
       `<div style="background:#8f5a37;color:#fff;padding:14px 20px;font-family:sans-serif;font-size:0.85rem;">
@@ -570,7 +575,57 @@ function formatVolumeTbsp(totalTbsp) {
 }
 
 // ---------------- GROCERY LIST ----------------
+// Lists every meal currently contributing to the grocery list (day-by-day picks +
+// This Week's Recipes), each with a one-click remove so you don't have to jump back
+// to the Planner tab just to drop a dish and its ingredients.
+function renderGroceryMeals() {
+  const list = document.getElementById("grocery-meals-list");
+  const items = [];
+  DAYS.forEach(day => {
+    const selections = plan[day] || {};
+    Object.entries(selections).forEach(([slot, id]) => {
+      if (!id) return;
+      const r = RECIPES.find(x => x.id === id);
+      if (!r) return;
+      items.push({ label: r.name, meta: `${day.slice(0, 3)} ${slot}`, type: "plan", day, slot });
+    });
+  });
+  extras.forEach((id, i) => {
+    const r = RECIPES.find(x => x.id === id);
+    if (!r) return;
+    items.push({ label: r.name, meta: "this week", type: "extra", index: i });
+  });
+
+  if (!items.length) {
+    list.innerHTML = `<li class="extras-empty" style="list-style:none;border:none;box-shadow:none;padding:0;">Nothing on the list yet — add a meal from Recipes or the Weekly Planner.</li>`;
+    return;
+  }
+
+  list.innerHTML = items.map((it, i) => `
+    <li>
+      <span><span class="extra-name">${esc(it.label)}</span><span class="extra-meta">${esc(it.meta)}</span></span>
+      <button class="extra-remove" data-index="${i}" aria-label="Remove ${esc(it.label)} and its ingredients">×</button>
+    </li>`).join("");
+
+  list.querySelectorAll(".extra-remove").forEach(btn => {
+    const it = items[parseInt(btn.dataset.index)];
+    btn.addEventListener("click", () => {
+      if (it.type === "extra") {
+        extras.splice(it.index, 1);
+        saveJSON("mealprep.extras", extras);
+        renderExtras();
+      } else {
+        plan[it.day][it.slot] = null;
+        saveJSON("mealprep.plan", plan);
+        renderPlanner();
+      }
+      renderGrocery();
+    });
+  });
+}
+
 function renderGrocery() {
+  renderGroceryMeals();
   const groups = {}; // normalized item -> { displayName, entries:[{qty,unit,source}], noQty:[{source}] }
 
   DAYS.forEach(day => {

@@ -12,7 +12,7 @@
        browser that visited in the last 10 min can load fresh HTML alongside a
        stale cached CSS/JS pair — bump this string on every deploy that touches
        css/style.css or js/app.js. -->
-  <link rel="stylesheet" href="css/style.css?v=2026111306" />
+  <link rel="stylesheet" href="css/style.css?v=2026112301" />
 </head>
 <body>
   <header class="app-header">
@@ -103,6 +103,15 @@
     <section id="mode-grocery" class="mode-panel">
       <h2 class="section-heading section-heading-first">Grocery List</h2>
       <p class="hint">Combines quantities for the same ingredient across This Week's Recipes and any day-by-day meal-prep picks. Check items off as you shop.</p>
+
+      <h2 class="section-heading">Meals on this list</h2>
+      <p class="hint">Remove a dish here to drop all of its ingredients from the list below in one click.</p>
+      <ul id="grocery-meals-list" class="extras-list"></ul>
+
+      <div class="planner-toolbar">
+        <button id="reset-checked-btn">Reset checked items</button>
+        <span class="hint">Unchecks everything below for a fresh shopping trip — doesn't remove any meals. To drop a meal's ingredients entirely, remove it above instead.</span>
+      </div>
       <ul id="grocery-list" class="grocery-list"></ul>
     </section>
   </main>
@@ -152,6 +161,6 @@
     </form>
   </dialog>
 
-  <script src="js/app.js?v=2026111306"></script>
+  <script src="js/app.js?v=2026112301"></script>
 </body>
 </html>
