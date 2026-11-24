@@ -785,3 +785,83 @@ body:has(#recipe-view-dialog[open]) { overflow: hidden; }
   .rv-head { flex-wrap: wrap; }
   .rv-head-actions { order: -1; width: 100%; justify-content: space-between; }
 }
+
+/* ---------- Day highlights (drag from This Week's Recipes onto a day) ---------- */
+.extras-list li[draggable="true"] { cursor: grab; }
+.extras-list li[draggable="true"]:active { cursor: grabbing; }
+.drag-grip { color: var(--text-muted); margin-right: 10px; font-size: 0.9rem; }
+.extra-actions { display: flex; align-items: center; gap: 6px; flex-shrink: 0; }
+.extra-day-select { font-size: 0.7rem; padding: 5px 8px; width: auto; }
+
+.day-highlights { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 6px; }
+.day-highlights:not(:empty) { margin-bottom: 6px; }
+.hl-chip {
+  display: flex;
+  align-items: flex-start;
+  background: var(--ink);
+  color: var(--ink-contrast);
+  border-radius: 8px;
+  cursor: grab;
+}
+.hl-chip button {
+  background: none;
+  border: none;
+  color: inherit;
+  text-transform: none;
+  letter-spacing: normal;
+}
+.hl-chip button:hover { background: none; color: inherit; }
+.hl-open {
+  flex: 1;
+  min-width: 0;
+  text-align: left;
+  padding: 7px 4px 7px 10px;
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: 0.95rem;
+  line-height: 1.2;
+  overflow-wrap: anywhere;
+}
+.hl-open::before { content: "★ "; font-style: normal; font-size: 0.75em; }
+.hl-open:hover { text-decoration: underline; }
+.hl-remove { padding: 6px 8px; font-size: 0.95rem; opacity: 0.75; }
+.hl-remove:hover { opacity: 1; }
+.hl-chip button:focus-visible { outline-color: var(--ink-contrast); outline-offset: -2px; }
+
+/* While a drag is in progress, show every day as a target and emphasize the hovered one. */
+.day-card { transition: outline-color 0.12s, background 0.12s; outline: 2px dashed transparent; outline-offset: 3px; }
+body.hl-dragging .day-card { outline-color: var(--border); }
+body.hl-dragging .day-card.drop-over { outline: 2px solid var(--ink); background: var(--bg); }
+
+@media (max-width: 600px) {
+  .extras-list li { flex-wrap: wrap; }
+}
+
+/* ---------- Grocery sort toggle + grouped list ---------- */
+.grocery-toolbar .hint { flex-basis: 100%; }
+.sort-toggle { display: inline-flex; align-items: center; gap: 0; }
+.sort-label {
+  font-size: 0.68rem; letter-spacing: 0.12em; text-transform: uppercase;
+  color: var(--text-muted); margin-right: 10px;
+}
+.sort-toggle button {
+  background: transparent; color: var(--ink);
+  border: 1px solid var(--ink); border-radius: 0; padding: 8px 14px;
+}
+.sort-toggle button + button { border-left: none; }
+.sort-toggle button:first-of-type { border-radius: var(--radius) 0 0 var(--radius); }
+.sort-toggle button:last-of-type { border-radius: 0 var(--radius) var(--radius) 0; }
+.sort-toggle button[aria-pressed="true"] { background: var(--ink); color: var(--ink-contrast); }
+
+.grocery-group { margin: 0 0 28px; }
+.grocery-group-heading {
+  font-family: var(--serif); font-weight: 600; font-size: 1.25rem;
+  margin: 0 0 10px; padding-bottom: 6px; border-bottom: 1px solid var(--border);
+  display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap;
+}
+.grocery-group-meta, .grocery-group-count {
+  font-family: var(--sans); font-weight: 400; font-size: 0.68rem;
+  letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-muted);
+}
+.grocery-group-count { margin-left: auto; }
+.grocery-group-cart .grocery-group-heading { color: var(--text-muted); font-style: italic; }

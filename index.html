@@ -12,7 +12,7 @@
        browser that visited in the last 10 min can load fresh HTML alongside a
        stale cached CSS/JS pair — bump this string on every deploy that touches
        css/style.css or js/app.js. -->
-  <link rel="stylesheet" href="css/style.css?v=2026112301" />
+  <link rel="stylesheet" href="css/style.css?v=2026112402" />
 </head>
 <body>
   <header class="app-header">
@@ -82,7 +82,7 @@
     <!-- WEEKLY PLANNER: this week's recipe picks (any recipe) on top, then the optional day-by-day meal-prep grid -->
     <section id="mode-planner" class="mode-panel">
       <h2 class="section-heading section-heading-first">This Week's Recipes</h2>
-      <p class="hint">Anything you plan to cook this week — any recipe, any category, add as many as you like. Everything here goes on the Grocery List.</p>
+      <p class="hint">Anything you plan to cook this week — any recipe, any category, add as many as you like. Everything here goes on the Grocery List. Drag one onto a day below (or use its "+ Day" menu) to highlight it on that day.</p>
       <div class="extras-add-row">
         <label for="extras-select" class="sr-only">Add a recipe to this week's recipes</label>
         <select id="extras-select"></select>
@@ -108,11 +108,16 @@
       <p class="hint">Remove a dish here to drop all of its ingredients from the list below in one click.</p>
       <ul id="grocery-meals-list" class="extras-list"></ul>
 
-      <div class="planner-toolbar">
+      <div class="planner-toolbar grocery-toolbar">
+        <div class="sort-toggle" id="grocery-sort" role="group" aria-label="Sort grocery list by">
+          <span class="sort-label">Sort by</span>
+          <button type="button" data-sort="section" aria-pressed="true">Store section</button>
+          <button type="button" data-sort="meal" aria-pressed="false">Meal</button>
+        </div>
         <button id="reset-checked-btn">Reset checked items</button>
-        <span class="hint">Unchecks everything below for a fresh shopping trip — doesn't remove any meals. To drop a meal's ingredients entirely, remove it above instead.</span>
+        <span class="hint">Checked items move to "In your cart" at the bottom. Reset unchecks everything for a fresh shopping trip — it doesn't remove any meals. To drop a meal's ingredients entirely, remove it above instead.</span>
       </div>
-      <ul id="grocery-list" class="grocery-list"></ul>
+      <div id="grocery-list" class="grocery-groups" aria-live="polite"></div>
     </section>
   </main>
 
@@ -161,6 +166,6 @@
     </form>
   </dialog>
 
-  <script src="js/app.js?v=2026112301"></script>
+  <script src="js/app.js?v=2026112402"></script>
 </body>
 </html>

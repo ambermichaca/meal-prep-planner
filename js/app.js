@@ -11,6 +11,11 @@ let RECIPES = [];
 let plan = loadJSON("mealprep.plan", {});
 let extras = loadJSON("mealprep.extras", []); // array of recipe ids, duplicates allowed
 let groceryChecked = loadJSON("mealprep.groceryChecked", {});
+let grocerySort = loadJSON("mealprep.grocerySort", "section"); // "section" | "meal"
+// Day highlights: recipes from This Week's Recipes dragged onto a day (e.g. a special
+// dinner). { Monday: [recipeId, ...] }. Display-only — they don't change the macro
+// totals or the grocery list (the recipe is already on the list via `extras`).
+let highlights = loadJSON("mealprep.highlights", {});
 // Checkbox filters: several boxes in one group = match ANY of them; across groups = match ALL.
 const FILTER_GROUPS = [
   { key: "category", label: "Category" },
@@ -48,6 +53,7 @@ async function init() {
     setupCategoryMenuTriggers();
     setupModeSwitch();
     setupExtras();
+    setupHighlights();
     renderRecipes();
     renderPlanner();
     renderExtras();
@@ -56,10 +62,13 @@ async function init() {
     setupRecipeView();
     document.getElementById("search").addEventListener("input", renderRecipes);
     document.getElementById("clear-week-btn").addEventListener("click", () => {
-      if (confirm("Clear all meals selected for this week?")) {
-        plan = {}; saveJSON("mealprep.plan", plan); renderPlanner(); renderGrocery();
+      if (confirm("Clear all meal-prep picks and day highlights for this week?")) {
+        plan = {}; saveJSON("mealprep.plan", plan);
+        highlights = {}; saveJSON("mealprep.highlights", highlights);
+        renderPlanner(); renderGrocery();
       }
     });
+    setupGroceryControls();
     document.getElementById("reset-checked-btn").addEventListener("click", () => {
       groceryChecked = {};
       saveJSON("mealprep.groceryChecked", groceryChecked);
@@ -397,8 +406,9 @@ function selectId(day, slot) { return `sel-${day}-${slot.replace(/\s+/g, "")}`; 
 function dayCardHTML(day) {
   const selections = plan[day] || {};
   return `
-    <div class="day-card">
+    <div class="day-card" data-day="${day}">
       <h4>${day}</h4>
+      ${dayHighlightsHTML(day)}
       ${SLOTS.map(slot => {
         const options = RECIPES.filter(r => r.mealSlot === SLOT_TO_MEALSLOT[slot] && r.category === MEAL_PREP_CATEGORY);
         const current = selections[slot] || "";
@@ -456,6 +466,111 @@ function updateWeekTotals() {
 
 function round1(n) { return Math.round(n * 10) / 10; }
 
+// ---------------- DAY HIGHLIGHTS (drag from This Week's Recipes onto a day) ----------------
+function dayHighlightsHTML(day) {
+  const ids = highlights[day] || [];
+  const chips = ids.map(id => {
+    const r = RECIPES.find(x => x.id === id);
+    if (!r) return "";
+    return `<li class="hl-chip" draggable="true" data-id="${esc(id)}" data-day="${day}">
+      <button type="button" class="hl-open" data-id="${esc(id)}" title="View recipe">${esc(r.name)}</button>
+      <button type="button" class="hl-remove" data-id="${esc(id)}" data-day="${day}" aria-label="Remove ${esc(r.name)} from ${day}">×</button>
+    </li>`;
+  }).join("");
+  return `<ul class="day-highlights" aria-label="${day} highlights">${chips}</ul>`;
+}
+
+function addHighlight(day, id, fromDay) {
+  if (fromDay === day) return;
+  if (fromDay) highlights[fromDay] = (highlights[fromDay] || []).filter(x => x !== id);
+  highlights[day] = highlights[day] || [];
+  if (!highlights[day].includes(id)) highlights[day].push(id);
+  saveJSON("mealprep.highlights", highlights);
+  renderPlanner();
+}
+
+function removeHighlight(day, id) {
+  highlights[day] = (highlights[day] || []).filter(x => x !== id);
+  saveJSON("mealprep.highlights", highlights);
+  renderPlanner();
+}
+
+// A highlight only makes sense while its recipe is in This Week's Recipes —
+// when a recipe leaves that list, its highlights go with it.
+function pruneHighlights() {
+  let changed = false;
+  Object.keys(highlights).forEach(day => {
+    const kept = highlights[day].filter(id => extras.includes(id));
+    if (kept.length !== highlights[day].length) { highlights[day] = kept; changed = true; }
+  });
+  if (changed) { saveJSON("mealprep.highlights", highlights); renderPlanner(); }
+}
+
+// All listeners are delegated to containers that persist across re-renders.
+function setupHighlights() {
+  let drag = null; // { id, fromDay } for the drag in progress
+  const grid = document.getElementById("planner-grid");
+  const list = document.getElementById("extras-list");
+
+  const start = (e, payload) => {
+    drag = payload;
+    e.dataTransfer.effectAllowed = payload.fromDay ? "move" : "copy";
+    e.dataTransfer.setData("text/plain", payload.id); // Firefox won't start a drag without data
+    document.body.classList.add("hl-dragging");
+  };
+  const end = () => {
+    drag = null;
+    document.body.classList.remove("hl-dragging");
+    grid.querySelectorAll(".drop-over").forEach(c => c.classList.remove("drop-over"));
+  };
+
+  list.addEventListener("dragstart", e => {
+    const li = e.target.closest("li[data-id]");
+    if (li) start(e, { id: li.dataset.id, fromDay: null });
+  });
+  list.addEventListener("dragend", end);
+  grid.addEventListener("dragstart", e => {
+    const chip = e.target.closest(".hl-chip");
+    if (chip) start(e, { id: chip.dataset.id, fromDay: chip.dataset.day });
+  });
+  grid.addEventListener("dragend", end);
+
+  grid.addEventListener("dragover", e => {
+    const card = e.target.closest(".day-card");
+    if (!drag || !card) return;
+    e.preventDefault(); // marks the card as a valid drop target
+    e.dataTransfer.dropEffect = drag.fromDay ? "move" : "copy";
+    card.classList.add("drop-over");
+  });
+  grid.addEventListener("dragleave", e => {
+    const card = e.target.closest(".day-card");
+    if (card && !card.contains(e.relatedTarget)) card.classList.remove("drop-over");
+  });
+  grid.addEventListener("drop", e => {
+    const card = e.target.closest(".day-card");
+    if (!drag || !card) return;
+    e.preventDefault();
+    const { id, fromDay } = drag;
+    end();
+    addHighlight(card.dataset.day, id, fromDay);
+  });
+
+  grid.addEventListener("click", e => {
+    const rm = e.target.closest(".hl-remove");
+    if (rm) { removeHighlight(rm.dataset.day, rm.dataset.id); return; }
+    const open = e.target.closest(".hl-open");
+    if (open) openRecipeView(open.dataset.id);
+  });
+
+  // Tap/keyboard alternative to dragging (phones don't reliably support drag and drop).
+  list.addEventListener("change", e => {
+    const sel = e.target.closest(".extra-day-select");
+    if (!sel || !sel.value) return;
+    addHighlight(sel.value, sel.dataset.id, null);
+    sel.value = "";
+  });
+}
+
 // ---------------- EXTRA SELECTIONS (any recipe, any category — outside the tracked plan) ----------------
 function setupExtras() {
   const sel = document.getElementById("extras-select");
@@ -473,6 +588,7 @@ function setupExtras() {
 
 function renderExtras() {
   refreshWeekButtons(); // keep card / recipe-view buttons in sync with the list
+  pruneHighlights();
   const list = document.getElementById("extras-list");
   if (!extras.length) {
     list.innerHTML = `<li class="extras-empty" style="list-style:none;border:none;box-shadow:none;padding:0;">Nothing added yet. Tap "+ Grocery list" on any recipe card, or pick one here.</li>`;
@@ -481,9 +597,15 @@ function renderExtras() {
   list.innerHTML = extras.map((id, i) => {
     const r = RECIPES.find(x => x.id === id);
     if (!r) return "";
-    return `<li>
-      <span><span class="extra-name">${esc(r.name)}</span><span class="extra-meta">${esc(r.category)} · ${esc(r.mealSlot)}</span></span>
-      <button class="extra-remove" data-index="${i}" aria-label="Remove ${esc(r.name)}">×</button>
+    return `<li draggable="true" data-id="${esc(id)}" title="Drag onto a day below to highlight it">
+      <span><span class="drag-grip" aria-hidden="true">⠿</span><span class="extra-name">${esc(r.name)}</span><span class="extra-meta">${esc(r.category)} · ${esc(r.mealSlot)}</span></span>
+      <span class="extra-actions">
+        <select class="extra-day-select" data-id="${esc(id)}" aria-label="Highlight ${esc(r.name)} on a day">
+          <option value="">+ Day</option>
+          ${DAYS.map(d => `<option value="${d}">${d}</option>`).join("")}
+        </select>
+        <button class="extra-remove" data-index="${i}" aria-label="Remove ${esc(r.name)}">×</button>
+      </span>
     </li>`;
   }).join("");
 
@@ -574,6 +696,33 @@ function formatVolumeTbsp(totalTbsp) {
   return parts.join(" ");
 }
 
+// ---------------- STORE SECTIONS (for the "Store section" grocery sort) ----------------
+// Best-effort keyword match on the ingredient name; the first rule that matches wins,
+// so the order matters (e.g. "garlic powder" must hit Spices before "garlic" hits Produce,
+// "chicken broth" must hit Pantry before "chicken" hits Meat). Anything unmatched → Other.
+const STORE_SECTIONS = ["Produce", "Bakery & Bread", "Meat & Seafood", "Dairy & Eggs", "Frozen",
+  "Pantry", "Baking", "Spices & Seasonings", "Wine & Spirits", "Other"];
+const SECTION_RULES = [
+  ["Frozen", /\bfrozen\b|ice cream|\bfries\b/],
+  ["Baking", /pudding mix|cake mix/],
+  ["Pantry", /\bcans?\b|\bjar\b|\bbox(es)?\b|in adobo|sauce|broth|stock|bouillon|knorr|vinegar|soy\b|hoisin|mirin|sriracha|sambal|salsa|marinara|(tomato|miso|curry|chili|pepper|garlic|ginger) paste|peanut butter|almond butter|coconut (milk|cream)|almond milk|dairy-free milk|condensed milk|evaporated milk|noodles?|pasta|spaghetti|bucatini|fusilli|macaroni|lasagna|ramen|udon|bread ?crumbs|panko|protein|whey|\boil\b|evoo|spray|mayo|tea bag|tortilla chips/],
+  ["Wine & Spirits", /\bwine\b|vodka|\brum\b|bourbon|liqueur|\bsake\b|framboise/],
+  ["Spices & Seasonings", /\bdried\b|sazón|granulated garlic/],
+  ["Produce", /\bfresh\b|cilantro|parsley|\bmint\b|\bdill\b|culantro|epazote|basil|coriander leaves|chopped coriander|\bsprigs?\b|lettuce/],
+  ["Meat & Seafood", /chicken|beef|steak|turkey|pork|lamb|bacon|shrimp|salmon|\bcod\b|\bfish\b|tuna|sausage|cold cuts/],
+  ["Dairy & Eggs", /\beggs?\b|egg (white|yolk)|yolks?\b|milk|butter|cream|cheese|cheddar|mozzarella|parmesan|pecorino|gouda|colby|monterey|ricotta|feta|queso|yogurt|cottage|mascarpone|gruyere/],
+  ["Bakery & Bread", /tortilla/],
+  ["Baking", /flour|baking|bicarbonate|yeast|sugar|splenda|stevia|swerve|cocoa|cacao|chocolate|extract|vanilla|cake mix|pudding mix|cornstarch|corn ?meal|maseca|food gel|frosting|pie crust|puff pastry|crescent|wafers|ladyfingers|oreo|m&m|shredded coconut|flaked coconut|crisco|caramel\b/],
+  ["Spices & Seasonings", /salt|^pepper$|black pepper|white pepper|cracked|pepper flakes|chili flakes|cayenne|paprika|cumin|cinnamon|nutmeg|cardamom|allspice|spice|turmeric|garam masala|powder|oregano|thyme|bay lea|rosemary|seasoning|sazón|adobo|\bmsg\b|ground cloves|pinch clove|^cloves$|coriander|sesame seeds|aleppo|pul biber|citric acid|chiles|\bground\b|italian/],
+  ["Bakery & Bread", /bread|tortilla|\bbuns?\b|pitas?\b|bagel|baguette|brioche|challah|croissant|flatbread|tostadas?|wrap|focaccia/],
+  ["Produce", /onion|garlic|ginger|shallot|scallion|lemon|lime|orange|apple|banana|berr|kiwi|mango|melon|pineapple|grape|pear|avocado|tomato|tomatillo|cucumber|carrot|celery|potato|zucchini|squash|pepper|jalapeño|chile|chili|broccoli|cauliflower|cabbage|slaw|kale|spinach|arugula|greens|romaine|mushroom|corn|green beans|peas|asparagus|sprouts|veg|salad|radish|beet/],
+  ["Pantry", /rice|quinoa|oat|lentil|beans?\b|chickpea|honey|syrup|nuts?\b|almond|cashew|pecan|walnut|peanut|seeds|tahini|mayo|mustard|ketchup|cheerios|chips|pretzel|coffee|\btea\b|olive|vinaigrette|maple|tuna|dijon|miso|pumpkin|chia/]
+];
+function storeSection(item) {
+  const hit = SECTION_RULES.find(([, re]) => re.test(item));
+  return hit ? hit[0] : "Other";
+}
+
 // ---------------- GROCERY LIST ----------------
 // Lists every meal currently contributing to the grocery list (day-by-day picks +
 // This Week's Recipes), each with a one-click remove so you don't have to jump back
@@ -627,6 +776,7 @@ function renderGroceryMeals() {
 function renderGrocery() {
   renderGroceryMeals();
   const groups = {}; // normalized item -> { displayName, entries:[{qty,unit,source}], noQty:[{source}] }
+  const mealOrder = new Set(); // every meal source, in planner order (days first, then this week's recipes)
 
   DAYS.forEach(day => {
     const selections = plan[day] || {};
@@ -635,6 +785,7 @@ function renderGrocery() {
       const r = RECIPES.find(x => x.id === id);
       if (!r) return;
       const source = `${r.name} (${day.slice(0, 3)} ${slot})`;
+      mealOrder.add(source);
       r.ingredients.forEach(rawLine => {
         const parsed = parseIngredientLine(rawLine);
         if (!groups[parsed.item]) groups[parsed.item] = { displayName: parsed.item, entries: [], noQty: [] };
@@ -651,6 +802,7 @@ function renderGrocery() {
     const r = RECIPES.find(x => x.id === id);
     if (!r) return;
     const source = `${r.name} (this week)`;
+    mealOrder.add(source);
     r.ingredients.forEach(rawLine => {
       const parsed = parseIngredientLine(rawLine);
       if (!groups[parsed.item]) groups[parsed.item] = { displayName: parsed.item, entries: [], noQty: [] };
@@ -669,7 +821,7 @@ function renderGrocery() {
     return;
   }
 
-  list.innerHTML = keys.map(key => {
+  const items = keys.map(key => {
     const g = groups[key];
     let volumeTotal = 0;
     const otherBuckets = {}; // unit (or "×" for unitless count) -> total
@@ -688,36 +840,89 @@ function renderGrocery() {
     Object.entries(otherBuckets).forEach(([u, total]) => {
       qtyParts.push(u === "×" ? formatQty(total) : `${formatQty(total)} ${UNIT_LABEL[u] ? UNIT_LABEL[u](total) : u}`);
     });
-    const qtyLabel = qtyParts.length ? qtyParts.join(" + ") + " — " : "";
+    const qtyLabel = qtyParts.join(" + ");
 
     const allSources = [...g.entries.map(e => e.source), ...g.noQty.map(e => e.source)];
+    const meals = [...new Set(allSources)];
     const unspecifiedNote = g.noQty.length
       ? `<br>Also needed (amount not specified): ${g.noQty.map(e => esc(e.display)).join("; ")}`
       : "";
 
     const displayName = key.charAt(0).toUpperCase() + key.slice(1);
     const keyHash = "gk-" + btoa(unescape(encodeURIComponent(key))).replace(/[^a-zA-Z0-9]/g, "");
-    const checked = groceryChecked[keyHash] ? "checked" : "";
+    const checked = !!groceryChecked[keyHash];
 
-    return `<li class="${groceryChecked[keyHash] ? "checked" : ""}" data-key="${keyHash}">
+    const html = `<li class="${checked ? "checked" : ""}" data-key="${keyHash}">
       <label>
-        <input type="checkbox" ${checked} />
+        <input type="checkbox" ${checked ? "checked" : ""} />
         <span>
-          <span class="item-name">${esc(displayName)}${qtyLabel ? ` <span class="item-qty">— ${esc(qtyLabel.replace(/ — $/, ""))}</span>` : ""}</span>
+          <span class="item-name">${esc(displayName)}${qtyLabel ? ` <span class="item-qty">— ${esc(qtyLabel)}</span>` : ""}</span>
           <span class="item-sources">Used in: ${allSources.map(esc).join(", ")}${unspecifiedNote}</span>
         </span>
       </label>
     </li>`;
-  }).join("");
-
-  list.querySelectorAll("li").forEach(li => {
-    const key = li.dataset.key;
-    li.querySelector("input").addEventListener("change", e => {
-      groceryChecked[key] = e.target.checked;
-      saveJSON("mealprep.groceryChecked", groceryChecked);
-      li.classList.toggle("checked", e.target.checked);
-    });
+    return { keyHash, checked, html, meals, section: storeSection(key) };
   });
+
+  // Unchecked items are grouped by store section or by meal; everything already
+  // checked off sinks into one "In your cart" group at the very bottom.
+  const SHARED = "Used in more than one meal";
+  const order = grocerySort === "meal" ? [...mealOrder, SHARED] : STORE_SECTIONS;
+  const buckets = new Map(order.map(name => [name, []]));
+  const cart = [];
+  items.forEach(it => {
+    if (it.checked) { cart.push(it); return; }
+    const name = grocerySort === "meal" ? (it.meals.length === 1 ? it.meals[0] : SHARED) : it.section;
+    buckets.get(name).push(it);
+  });
+
+  const groupHTML = (title, its, extraClass = "") => `
+    <section class="grocery-group ${extraClass}">
+      <h3 class="grocery-group-heading">${title} <span class="grocery-group-count">${its.length}</span></h3>
+      <ul class="grocery-list">${its.map(it => it.html).join("")}</ul>
+    </section>`;
+  // "Pound Cake (Bundt) (Wed Dinner)" -> name + muted "Wed Dinner"
+  const mealTitle = src => {
+    const m = src.match(/^(.*) \((.*)\)$/);
+    return m ? `${esc(m[1])} <span class="grocery-group-meta">${esc(m[2])}</span>` : esc(src);
+  };
+
+  let html = "";
+  buckets.forEach((its, name) => {
+    if (its.length) html += groupHTML(grocerySort === "meal" && name !== SHARED ? mealTitle(name) : esc(name), its);
+  });
+  if (!html) html = `<p class="extras-empty">Everything's in your cart. 🎉</p>`;
+  if (cart.length) html += groupHTML("In your cart", cart, "grocery-group-cart");
+  list.innerHTML = html;
+}
+
+// One-time listeners on containers that survive re-renders.
+function setupGroceryControls() {
+  const list = document.getElementById("grocery-list");
+  list.addEventListener("change", e => {
+    const li = e.target.closest("li[data-key]");
+    if (!li || e.target.type !== "checkbox") return;
+    const key = li.dataset.key;
+    if (e.target.checked) groceryChecked[key] = true; else delete groceryChecked[key];
+    saveJSON("mealprep.groceryChecked", groceryChecked);
+    renderGrocery(); // moves the item into / out of "In your cart"
+    // Keep keyboard focus on the same item after it moves.
+    const moved = list.querySelector(`li[data-key="${key}"] input`);
+    if (moved) moved.focus({ preventScroll: true });
+  });
+
+  const toggle = document.getElementById("grocery-sort");
+  const syncToggle = () => toggle.querySelectorAll("button").forEach(b =>
+    b.setAttribute("aria-pressed", String(b.dataset.sort === grocerySort)));
+  toggle.addEventListener("click", e => {
+    const btn = e.target.closest("button[data-sort]");
+    if (!btn) return;
+    grocerySort = btn.dataset.sort;
+    saveJSON("mealprep.grocerySort", grocerySort);
+    syncToggle();
+    renderGrocery();
+  });
+  syncToggle();
 }
 
 // ---------------- ADD RECIPE DIALOG ----------------
