@@ -915,8 +915,9 @@ function renderGrocery() {
     const displayName = g.name;
     // Which dishes need it, e.g. "(Chicken Pot Pie, Carrot Cake)". Sources look like
     // "Carrot Cake (this week)" / "Steak Salad (Wed Dinner)" — drop that trailing note.
-    const mealNames = [...new Set(g.entries.map(e =>
-      e.source === ONE_OFF_SOURCE ? "one-off" : e.source.replace(/ \([^()]*\)$/, "")))].join(", ");
+    // One-off items aren't labeled — only recipe meals are listed.
+    const mealNames = [...new Set(g.entries.filter(e => e.source !== ONE_OFF_SOURCE)
+      .map(e => e.source.replace(/ \([^()]*\)$/, "")))].join(", ");
     const keyHash = "gk-" + btoa(unescape(encodeURIComponent(key))).replace(/[^a-zA-Z0-9]/g, "");
     const checked = !!groceryChecked[keyHash];
 
@@ -924,12 +925,12 @@ function renderGrocery() {
       <label>
         <input type="checkbox" ${checked ? "checked" : ""} />
         <span>
-          <span class="item-name">${esc(displayName)}${qtyLabel ? ` <span class="item-qty">— ${esc(qtyLabel)}</span>` : ""} <span class="item-meals">(${esc(mealNames)})</span></span>
+          <span class="item-name">${esc(displayName)}${qtyLabel ? ` <span class="item-qty">— ${esc(qtyLabel)}</span>` : ""}${mealNames ? ` <span class="item-meals">(${esc(mealNames)})</span>` : ""}</span>
           <span class="item-sources item-breakdown">${breakdown}</span>
         </span>
       </label>
     </li>`;
-    const text = displayName + (qtyLabel ? ` — ${qtyLabel}` : "") + ` (${mealNames})`;
+    const text = displayName + (qtyLabel ? ` — ${qtyLabel}` : "") + (mealNames ? ` (${mealNames})` : "");
     return { keyHash, checked, html, text, meals, section: storeSection(g.name.toLowerCase()) };
   });
 
