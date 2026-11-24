@@ -603,7 +603,7 @@ fieldset label { margin-top: 10px; }
   gap: 10px;
   margin: 14px 0 16px;
 }
-.extras-add-row select { flex: 1; }
+.extras-add-row select, .extras-add-row input { flex: 1; min-width: 0; }
 
 .extras-list { list-style: none; padding: 0; margin: 0 0 8px; }
 

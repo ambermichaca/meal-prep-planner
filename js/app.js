@@ -12,6 +12,8 @@ let plan = loadJSON("mealprep.plan", {});
 let extras = loadJSON("mealprep.extras", []); // array of recipe ids, duplicates allowed
 let groceryChecked = loadJSON("mealprep.groceryChecked", {});
 let grocerySort = loadJSON("mealprep.grocerySort", "section"); // "section" | "meal"
+let oneOffs = loadJSON("mealprep.oneOffs", []); // free-text grocery lines not tied to a recipe
+const ONE_OFF_SOURCE = "One-off item";
 // Day highlights: recipes from This Week's Recipes dragged onto a day (e.g. a special
 // dinner). { Monday: [recipeId, ...] }. Display-only — they don't change the macro
 // totals or the grocery list (the recipe is already on the list via `extras`).
@@ -767,8 +769,9 @@ function formatQty(n) {
 // so the order matters (e.g. "garlic powder" must hit Spices before "garlic" hits Produce,
 // "chicken broth" must hit Pantry before "chicken" hits Meat). Anything unmatched → Other.
 const STORE_SECTIONS = ["Produce", "Bakery & Bread", "Meat & Seafood", "Dairy & Eggs", "Frozen",
-  "Pantry", "Baking", "Spices & Seasonings", "Wine & Spirits", "Other"];
+  "Pantry", "Baking", "Spices & Seasonings", "Wine & Spirits", "Household", "Other"];
 const SECTION_RULES = [
+  ["Household", /paper towel|toilet paper|tissue|napkin|\bfoil\b|plastic wrap|cling wrap|parchment|ziploc|zip-?top|freezer bag|trash bag|garbage bag|dish soap|dishwasher|detergent|sponge|bleach|cleaner|wipes|batteries|light ?bulb|shampoo|conditioner|toothpaste|deodorant|lotion/],
   ["Frozen", /\bfrozen\b|ice cream|\bfries\b/],
   ["Baking", /pudding mix|cake mix/],
   ["Pantry", /\bcans?\b|\bcanned\b|\bjar\b|\bbox(es)?\b|in adobo|sauce|broth|stock|bouillon|knorr|vinegar|soy\b|hoisin|mirin|sriracha|sambal|salsa|marinara|(tomato|miso|curry|chili|pepper|garlic|ginger) paste|peanut butter|almond butter|coconut (milk|cream)|almond milk|dairy-free milk|condensed milk|evaporated milk|noodles?|pasta|spaghetti|bucatini|fusilli|macaroni|lasagna|ramen|udon|bread ?crumbs|panko|protein|whey|\boil\b|evoo|spray|mayo|tea bag|tortilla chips/],
@@ -839,8 +842,20 @@ function renderGroceryMeals() {
   });
 }
 
+// The "One-off items" list on the Grocery tab — each row removable.
+function renderOneOffs() {
+  const list = document.getElementById("oneoff-list");
+  list.innerHTML = oneOffs.length
+    ? oneOffs.map((line, i) => `<li>
+        <span class="extra-name">${esc(line)}</span>
+        <button class="extra-remove" data-index="${i}" aria-label="Remove ${esc(line)}">×</button>
+      </li>`).join("")
+    : `<li class="extras-empty" style="list-style:none;border:none;box-shadow:none;padding:0;">Nothing added yet.</li>`;
+}
+
 function renderGrocery() {
   renderGroceryMeals();
+  renderOneOffs();
   const groups = {}; // canonical ingredient key -> { name, entries: [{ qty, unit, source, display }] }
   const mealOrder = new Set(); // every meal source, in planner order (days first, then this week's recipes)
   const addLine = (rawLine, source) => {
@@ -869,6 +884,8 @@ function renderGrocery() {
     mealOrder.add(source);
     r.ingredients.forEach(rawLine => addLine(rawLine, source));
   });
+  // One-off items go through the same parser, so "2 lb bananas" folds in with a recipe's bananas.
+  oneOffs.forEach(line => { mealOrder.add(ONE_OFF_SOURCE); addLine(line, ONE_OFF_SOURCE); });
 
   const keys = Object.keys(groups).sort((a, b) => groups[a].name.localeCompare(groups[b].name));
   const list = document.getElementById("grocery-list");
@@ -934,7 +951,9 @@ function renderGrocery() {
 
   let html = "";
   buckets.forEach((its, name) => {
-    if (its.length) html += groupHTML(grocerySort === "meal" && name !== SHARED ? mealTitle(name) : esc(name), its);
+    const title = grocerySort !== "meal" || name === SHARED ? esc(name)
+      : name === ONE_OFF_SOURCE ? "One-off items" : mealTitle(name);
+    if (its.length) html += groupHTML(title, its);
   });
   if (!html) html = `<p class="extras-empty">Everything's in your cart. 🎉</p>`;
   if (cart.length) html += groupHTML("In your cart", cart, "grocery-group-cart");
@@ -943,6 +962,26 @@ function renderGrocery() {
 
 // One-time listeners on containers that survive re-renders.
 function setupGroceryControls() {
+  const form = document.getElementById("oneoff-form");
+  const input = document.getElementById("oneoff-input");
+  form.addEventListener("submit", e => {
+    e.preventDefault();
+    const line = input.value.trim();
+    if (!line) return;
+    oneOffs.push(line);
+    saveJSON("mealprep.oneOffs", oneOffs);
+    input.value = "";
+    input.focus();
+    renderGrocery();
+  });
+  document.getElementById("oneoff-list").addEventListener("click", e => {
+    const btn = e.target.closest(".extra-remove");
+    if (!btn) return;
+    oneOffs.splice(parseInt(btn.dataset.index), 1);
+    saveJSON("mealprep.oneOffs", oneOffs);
+    renderGrocery();
+  });
+
   const list = document.getElementById("grocery-list");
   list.addEventListener("change", e => {
     const li = e.target.closest("li[data-key]");

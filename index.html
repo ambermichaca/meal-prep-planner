@@ -12,7 +12,7 @@
        browser that visited in the last 10 min can load fresh HTML alongside a
        stale cached CSS/JS pair — bump this string on every deploy that touches
        css/style.css or js/app.js. -->
-  <link rel="stylesheet" href="css/style.css?v=2026112403" />
+  <link rel="stylesheet" href="css/style.css?v=2026112404" />
 </head>
 <body>
   <header class="app-header">
@@ -108,6 +108,15 @@
       <p class="hint">Remove a dish here to drop all of its ingredients from the list below in one click.</p>
       <ul id="grocery-meals-list" class="extras-list"></ul>
 
+      <h2 class="section-heading">One-off items</h2>
+      <p class="hint">Anything else you need this trip that isn't from a recipe (paper towels, coffee, "2 lb bananas"). One item per add. They're sorted into the list below with everything else.</p>
+      <form class="extras-add-row" id="oneoff-form">
+        <label for="oneoff-input" class="sr-only">Add a one-off grocery item</label>
+        <input type="text" id="oneoff-input" placeholder="e.g. paper towels, 2 lb bananas" autocomplete="off" />
+        <button type="submit">+ Add</button>
+      </form>
+      <ul id="oneoff-list" class="extras-list"></ul>
+
       <div class="planner-toolbar grocery-toolbar">
         <div class="sort-toggle" id="grocery-sort" role="group" aria-label="Sort grocery list by">
           <span class="sort-label">Sort by</span>
@@ -166,6 +175,6 @@
     </form>
   </dialog>
 
-  <script src="js/app.js?v=2026112403"></script>
+  <script src="js/app.js?v=2026112404"></script>
 </body>
 </html>
