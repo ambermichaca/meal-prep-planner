@@ -869,3 +869,5 @@ body.hl-dragging .day-card.drop-over { outline: 2px solid var(--ink); background
 /* Per-recipe breakdown under each grocery total */
 .grocery-list .item-breakdown .bd-row { display: block; }
 .grocery-list .item-breakdown .bd-amt { font-style: normal; color: var(--text); }
+.list-actions { display: inline-flex; gap: 8px; }
+.list-actions button[hidden] { display: none; }

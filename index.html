@@ -12,7 +12,7 @@
        browser that visited in the last 10 min can load fresh HTML alongside a
        stale cached CSS/JS pair — bump this string on every deploy that touches
        css/style.css or js/app.js. -->
-  <link rel="stylesheet" href="css/style.css?v=2026112404" />
+  <link rel="stylesheet" href="css/style.css?v=2026112405" />
 </head>
 <body>
   <header class="app-header">
@@ -124,7 +124,11 @@
           <button type="button" data-sort="meal" aria-pressed="false">Meal</button>
         </div>
         <button id="reset-checked-btn">Reset checked items</button>
-        <span class="hint">Checked items move to "In your cart" at the bottom. Reset unchecks everything for a fresh shopping trip — it doesn't remove any meals. To drop a meal's ingredients entirely, remove it above instead.</span>
+        <span class="list-actions">
+          <button type="button" id="copy-list-btn">Copy list</button>
+          <button type="button" id="share-list-btn" hidden>Share…</button>
+        </span>
+        <span class="hint">Copy list / Share… send everything you haven't checked off as plain text, so you can paste it into Notes or Messages on your phone. Checked items move to "In your cart" at the bottom. Reset unchecks everything for a fresh shopping trip — it doesn't remove any meals. To drop a meal's ingredients entirely, remove it above instead.</span>
       </div>
       <div id="grocery-list" class="grocery-groups" aria-live="polite"></div>
     </section>
@@ -175,6 +179,6 @@
     </form>
   </dialog>
 
-  <script src="js/app.js?v=2026112404"></script>
+  <script src="js/app.js?v=2026112405"></script>
 </body>
 </html>

@@ -12,6 +12,7 @@ let plan = loadJSON("mealprep.plan", {});
 let extras = loadJSON("mealprep.extras", []); // array of recipe ids, duplicates allowed
 let groceryChecked = loadJSON("mealprep.groceryChecked", {});
 let grocerySort = loadJSON("mealprep.grocerySort", "section"); // "section" | "meal"
+let groceryText = ""; // plain-text copy of the current list (unchecked items), for Copy/Share
 let oneOffs = loadJSON("mealprep.oneOffs", []); // free-text grocery lines not tied to a recipe
 const ONE_OFF_SOURCE = "One-off item";
 // Day highlights: recipes from This Week's Recipes dragged onto a day (e.g. a special
@@ -890,6 +891,7 @@ function renderGrocery() {
   const keys = Object.keys(groups).sort((a, b) => groups[a].name.localeCompare(groups[b].name));
   const list = document.getElementById("grocery-list");
   if (!keys.length) {
+    groceryText = "";
     list.innerHTML = "<p>Nothing planned yet — pick some meals above and this list fills in automatically.</p>";
     return;
   }
@@ -923,7 +925,8 @@ function renderGrocery() {
         </span>
       </label>
     </li>`;
-    return { keyHash, checked, html, meals, section: storeSection(g.name.toLowerCase()) };
+    const text = displayName + (qtyLabel ? ` — ${qtyLabel}` : "");
+    return { keyHash, checked, html, text, meals, section: storeSection(g.name.toLowerCase()) };
   });
 
   // Unchecked items are grouped by store section or by meal; everything already
@@ -950,18 +953,61 @@ function renderGrocery() {
   };
 
   let html = "";
+  const textParts = [];
   buckets.forEach((its, name) => {
+    if (!its.length) return;
+    const plain = name === ONE_OFF_SOURCE ? "One-off items" : name;
     const title = grocerySort !== "meal" || name === SHARED ? esc(name)
       : name === ONE_OFF_SOURCE ? "One-off items" : mealTitle(name);
-    if (its.length) html += groupHTML(title, its);
+    html += groupHTML(title, its);
+    textParts.push(plain.toUpperCase() + "\n" + its.map(it => it.text).join("\n"));
   });
+  // Plain lines (no bullets) so Apple Notes can turn them straight into a checklist.
+  groceryText = textParts.length ? "Grocery list\n\n" + textParts.join("\n\n") : "";
   if (!html) html = `<p class="extras-empty">Everything's in your cart. 🎉</p>`;
   if (cart.length) html += groupHTML("In your cart", cart, "grocery-group-cart");
   list.innerHTML = html;
 }
 
 // One-time listeners on containers that survive re-renders.
+// Copy / Share the list as plain text (e.g. into Apple Notes or Messages on your phone).
+async function copyGroceryText(btn) {
+  if (!groceryText) return flashButton(btn, "List is empty");
+  try {
+    await navigator.clipboard.writeText(groceryText);
+  } catch (e) {
+    // Fallback for browsers without the async clipboard API.
+    const ta = document.createElement("textarea");
+    ta.value = groceryText;
+    ta.style.position = "fixed"; ta.style.opacity = "0";
+    document.body.appendChild(ta); ta.select();
+    const ok = document.execCommand("copy");
+    ta.remove();
+    if (!ok) return flashButton(btn, "Couldn't copy");
+  }
+  flashButton(btn, "Copied ✓");
+}
+
+function flashButton(btn, label) {
+  const original = btn.dataset.label || (btn.dataset.label = btn.textContent);
+  btn.textContent = label;
+  clearTimeout(btn._flash);
+  btn._flash = setTimeout(() => { btn.textContent = original; }, 1800);
+}
+
 function setupGroceryControls() {
+  const copyBtn = document.getElementById("copy-list-btn");
+  copyBtn.addEventListener("click", () => copyGroceryText(copyBtn));
+  const shareBtn = document.getElementById("share-list-btn");
+  if (navigator.share) {
+    shareBtn.hidden = false;
+    shareBtn.addEventListener("click", async () => {
+      if (!groceryText) return flashButton(shareBtn, "List is empty");
+      try { await navigator.share({ title: "Grocery list", text: groceryText }); }
+      catch (e) { /* user closed the share sheet */ }
+    });
+  }
+
   const form = document.getElementById("oneoff-form");
   const input = document.getElementById("oneoff-input");
   form.addEventListener("submit", e => {
