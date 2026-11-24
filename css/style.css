@@ -871,3 +871,4 @@ body.hl-dragging .day-card.drop-over { outline: 2px solid var(--ink); background
 .grocery-list .item-breakdown .bd-amt { font-style: normal; color: var(--text); }
 .list-actions { display: inline-flex; gap: 8px; }
 .list-actions button[hidden] { display: none; }
+.grocery-list .item-meals { font-weight: 400; font-size: 0.85em; color: var(--text-muted); font-style: italic; }
